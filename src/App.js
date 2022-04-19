@@ -11,7 +11,7 @@ const App = () => {
       <Router>
         <header>
           <Link to="/">
-            <h1>Bingo</h1>
+            <h1>Bingooo</h1>
           </Link>
         </header>
         <Switch>
