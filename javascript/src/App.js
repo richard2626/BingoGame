@@ -2,8 +2,8 @@ import { StrictMode } from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import SearchParams from "./SearchParams";
-import Details from "./Details";
 import Admin from "./Admin";
+import Game from "./pages/Games"
 
 const App = () => {
   return (
@@ -18,8 +18,8 @@ const App = () => {
           <Route path="/admin">
             <Admin />
           </Route>
-          <Route path="/details/:id">
-            <Details />
+          <Route path="/games">
+            <Game />
           </Route>
           <Route path="/">
             <SearchParams />
