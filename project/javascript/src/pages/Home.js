@@ -1,5 +1,5 @@
 export default function Home(){
     return(
-        <div>Home</div>
+        <div className="p-5 bg-white">You are in Home page</div>
     )
 }

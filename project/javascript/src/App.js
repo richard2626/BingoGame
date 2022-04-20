@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 
 import { w3cwebsocket as W3CWebSocket } from "websocket"
 import { v4 as uuidv4 } from "uuid"
+import Nav from "./components/nav"
 
 const client = new W3CWebSocket("ws://127.0.0.1:1234")
 
@@ -93,19 +94,14 @@ export function App() {
   }
 
   return (
-    <div>
+    <div className="bg-blue-200">
       <Router>
-        <header>
+        <header className="text-center text-4xl font-bold">
           <Link to="/">
             <h1>Bingooo</h1>
           </Link>
         </header>
-        <nav>
-          <Link to="/games">
-            開始遊戲
-          </Link>
-        </nav>
-        <a href="#" onClick={(event) => { handleLogout(event) }}>Logout</a>
+        <Nav />
 
         {/* Routes */}
         <Switch>
