@@ -43,17 +43,17 @@ export default function Games() {
 
     return (
         <div className="bg-indigo-50 text-center w-full h-400 space-y-2">
-            <div className="h-11 w-full">none</div>
+            <div className="h-11 w-full"></div>
 
             <div className="flex flex-row bg-indigo-100 text-center w-full h-600 justify-center" >
                 <div className="w-1/5 bg-red-100" id="notificationBar">
                     Hello
                 </div>
-                <div className="bg-slate-300 w-80 h-80 pt-10 text-center px-10" id="bingoTable">
+                <div className="bg-slate-300 w-80 h-80  ml-1 mr-1 text-center content-center px-auto grid grid-cols-5 gap-3" id="bingoTable">
                     {/* bingo buttons */}
                     {bingoList.map((item, index) => (
-                        <button className="bg-indigo-200 w-12 h-12 text-amber-600 rounded-md border-2 border-solid border-gray-500 hover:bg-indigo-300 disabled:cursor-not-allowed text-lg font-bold"
-                            value={index} onClick={handleButtonClicked} disabled={(mode === "picking" && bingoList[index] !== 0)}>{item}</button>
+                        <button className="bg-indigo-200 w-12 h-12 text-amber-600 rounded-md border-2 border-solid border-gray-500  hover:bg-indigo-300 disabled:cursor-not-allowed disabled:bg-indigo-300 disabled:text-neutral-50 text-lg font-bold "
+                            value={index} onClick={handleButtonClicked} disabled={(mode === "picking" |"gaming"&& bingoList[index] !== 0)}>{item}</button>
                     ))}
                 </div>
                 <div className="w-1/5 bg-red-100 flex flex-col justify-between py-2">
@@ -68,7 +68,6 @@ export default function Games() {
                     </div>
                 </div>
             </div>
-            <div className="bg-slate-200 w-10 h-80 object-right">1</div>
         </div>
 
     )
