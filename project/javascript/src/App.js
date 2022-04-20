@@ -3,13 +3,20 @@ import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import Admin from "./pages/Admin";
 import Game from "./pages/Games"
 import Home from "./pages/Home"
-
 import { useEffect, useState } from "react";
+
+import { w3cwebsocket as W3CWebSocket } from "websocket"
+import { v4 as uuidv4 } from "uuid"
+
+const client = new W3CWebSocket("ws://127.0.0.1:1234")
 
 export function App() {
   // username is unique uuid
   const [username, setUsername] = useState("undefined")
-  const [connection, setConnection] = useState()
+
+  const sendMsg = (data) => {
+    client.send(JSON.stringify(data))
+  }
 
   const handleMessage = (event) => {
     const message = JSON.parse(event.data)
@@ -17,53 +24,73 @@ export function App() {
 
     switch (message.type) {
       case "system":
-        sender = "系統訊息";
+        sender = "系統訊息"
         break;
       case "user":
-        sender = `使用者訊息: ${message.from}`
+        sender = msg.form
         break;
       case "handshake":
-        let user_info = {
+        const name = uuidv4().substring(0, 7);
+        setUsername(name)
+        console.log(name)
+        sendMsg({
           type: "login",
-          content: username,
-        }
-        sendMessage(user_info)
+          content: name,
+        })
         return;
+      case "login":
       case "logout":
         user_name = message.content;
-        user_list = message.user_list;
-        change_type = message.type;
-        dealUser(user_name, change_type, name_list);
-        return;
+        name_list = message.user_list;
+        change_type = message.message.type;
+        dealUser(user_name, change_type, name_list)
     }
-    listMessage(`${sender}${message.content}`)
+
+    console.log(`${sender}: ${message.content}`)
   }
 
-  /* Sending message */
-  const sendMsg = (msg) =>{
-    console.log(`sending message`)
-    WSH.send(JSON.stringify(msg))
+  const handleWindowClose = (event) => {
+    event.preventDefault()
+    event.returnValue = ""
+
+    /*console.log("closing the window")
+    var user_info = {
+      type: "logout",
+      content: username,
+    };
+    alert(`username: ${username}`)
+    sendMsg(user_info);
+    console.log(user_info)
+    client.close()*/
   }
+
 
   useEffect(() => {
-    setConnection(new WebSocket("ws://127.0.0.1:1234"))
-    const name = setRandomUUID(8,16)
-    setUsername(name)
-    console.log(`my uuid: ${username}`)
-    console.log(connection)
-    connection.onopen = ()=>{
-      console.log("connected")
+    client.onopen = () => {
+      console.log("websocket connected")
     }
-    connection.onmessge = (event) => {handleMessage(event)}
-    connection.onerror = (event) => { console.log(`Something went wrong ${event}`) }
+    client.onmessage = (message) => { handleMessage(message) }
+    window.addEventListener("beforeunload", handleWindowClose);
     return () => {
-      sendMsg({
-        type: "logout",
-        content: username,
-      })
-      connection.close()
+      window.removeEventListener("beforeunload", handleWindowClose)
     }
   }, [])
+
+  useEffect(() => {
+    console.log(`username: ${username}`)
+  }, [username])
+
+  const handleLogout = () => {
+    console.log("logging out")
+    var user_info = {
+      type: "logout",
+      content: username,
+    };
+    alert(`username: ${username}`)
+    sendMsg(user_info);
+    console.log(user_info)
+    client.close()
+  }
 
   return (
     <div>
@@ -74,10 +101,11 @@ export function App() {
           </Link>
         </header>
         <nav>
-          <Link to="/game">
+          <Link to="/games">
             開始遊戲
           </Link>
         </nav>
+        <a href="#" onClick={(event) => { handleLogout(event) }}>Logout</a>
 
         {/* Routes */}
         <Switch>
@@ -95,28 +123,3 @@ export function App() {
     </div>
   );
 };
-
-
-const setRandomUUID = (len, radix) => {
-  const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split("");
-  let uuid = [], i;
-  radix = radix || chars.length;
-
-  if (len) {
-    for (i = 0; i < len; ++i) {
-      uuid[i] = chars[0 | (Math.random() * radix)]
-    }
-  } else {
-    let r;
-    uuid[8] = uuid[13] = uuid[18] = uuid[23] = "-";
-    uuid[14] = "4";
-
-    for (i = 0; i < 36; i++) {
-      if (!uuid[i]) {
-        r = 0 | (Math.random() * 16);
-        uuid[i] = chars[i == 19 ? (r & 0x3) | 0x8 : r];
-      }
-    }
-  }
-  return uuid.join("");
-}
