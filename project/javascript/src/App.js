@@ -1,11 +1,21 @@
-import { StrictMode } from "react";
-import ReactDOM from "react-dom";
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
-import SearchParams from "./SearchParams";
-import Admin from "./Admin";
-import Game from "./pages/Games"
 
-const App = () => {
+import Admin from "./pages/Admin";
+import Game from "./pages/Games"
+import Home from "./pages/Home"
+
+import WebSocket from "ws"
+import { useEffect } from "react/cjs/react.production.min";
+
+
+export function App() {
+  const [username,setUsername] = useState("undefined")
+  const ws = new WebSocket("ws://127.0.0.1:1234")
+
+  useEffect(()=>{
+    
+  },[])
+
   return (
     <div>
       <Router>
@@ -14,24 +24,26 @@ const App = () => {
             <h1>Bingooo</h1>
           </Link>
         </header>
+        <nav>
+          <Link to="/game">
+            開始遊戲
+          </Link>
+        </nav>
+
+        {/* Routes */}
         <Switch>
           <Route path="/admin">
-            <Admin />
+            <Admin ws={ws}/>
           </Route>
           <Route path="/games">
-            <Game />
+            <Game ws={ws}/>
           </Route>
           <Route path="/">
-            <SearchParams />
+            <Home ws={ws}/>
           </Route>
         </Switch>
       </Router>
     </div>
   );
 };
-ReactDOM.render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-  document.getElementById("root")
-);
+
