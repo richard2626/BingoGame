@@ -3,18 +3,94 @@ import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import Admin from "./pages/Admin";
 import Game from "./pages/Games"
 import Home from "./pages/Home"
+import { useEffect, useState } from "react";
 
-import WebSocket from "ws"
-import { useEffect } from "react/cjs/react.production.min";
+import { w3cwebsocket as W3CWebSocket } from "websocket"
+import { v4 as uuidv4 } from "uuid"
 
+const client = new W3CWebSocket("ws://127.0.0.1:1234")
 
 export function App() {
-  const [username,setUsername] = useState("undefined")
-  const ws = new WebSocket("ws://127.0.0.1:1234")
+  // username is unique uuid
+  const [username, setUsername] = useState("undefined")
 
-  useEffect(()=>{
-    
-  },[])
+  const sendMsg = (data) => {
+    client.send(JSON.stringify(data))
+  }
+
+  const handleMessage = (event) => {
+    const message = JSON.parse(event.data)
+    let sender, user_name, name_list, change_type;
+
+    switch (message.type) {
+      case "system":
+        sender = "系統訊息"
+        break;
+      case "user":
+        sender = msg.form
+        break;
+      case "handshake":
+        const name = uuidv4().substring(0, 7);
+        setUsername(name)
+        console.log(name)
+        sendMsg({
+          type: "login",
+          content: name,
+        })
+        return;
+      case "login":
+      case "logout":
+        user_name = message.content;
+        name_list = message.user_list;
+        change_type = message.message.type;
+        dealUser(user_name, change_type, name_list)
+    }
+
+    console.log(`${sender}: ${message.content}`)
+  }
+
+  const handleWindowClose = (event) => {
+    event.preventDefault()
+    event.returnValue = ""
+
+    /*console.log("closing the window")
+    var user_info = {
+      type: "logout",
+      content: username,
+    };
+    alert(`username: ${username}`)
+    sendMsg(user_info);
+    console.log(user_info)
+    client.close()*/
+  }
+
+
+  useEffect(() => {
+    client.onopen = () => {
+      console.log("websocket connected")
+    }
+    client.onmessage = (message) => { handleMessage(message) }
+    window.addEventListener("beforeunload", handleWindowClose);
+    return () => {
+      window.removeEventListener("beforeunload", handleWindowClose)
+    }
+  }, [])
+
+  useEffect(() => {
+    console.log(`username: ${username}`)
+  }, [username])
+
+  const handleLogout = () => {
+    console.log("logging out")
+    var user_info = {
+      type: "logout",
+      content: username,
+    };
+    alert(`username: ${username}`)
+    sendMsg(user_info);
+    console.log(user_info)
+    client.close()
+  }
 
   return (
     <div>
@@ -25,25 +101,25 @@ export function App() {
           </Link>
         </header>
         <nav>
-          <Link to="/game">
+          <Link to="/games">
             開始遊戲
           </Link>
         </nav>
+        <a href="#" onClick={(event) => { handleLogout(event) }}>Logout</a>
 
         {/* Routes */}
         <Switch>
           <Route path="/admin">
-            <Admin ws={ws}/>
+            <Admin />
           </Route>
           <Route path="/games">
-            <Game ws={ws}/>
+            <Game />
           </Route>
           <Route path="/">
-            <Home ws={ws}/>
+            <Home />
           </Route>
         </Switch>
       </Router>
     </div>
   );
 };
-
