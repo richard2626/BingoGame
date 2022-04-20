@@ -1,10 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+console.log("adminyes");
 
 const Admin = () => {
   const [number, setNumber] = useState("start");
+  setNumber(18);
+
+  useEffect(() => {}, []);
 
   return (
-    <div style="width: 100px; height: 600px; margin: 10px auto; text-align: center">
+    <div
+      className="adminpage"
+      style="width: 100px; height: 600px; margin: 10px auto; text-align: center"
+    >
       <h1>Bingo</h1>
       <div>{number}</div>
       <div style="width: 200px; border: 1px solid gray; height: 100px">
@@ -30,23 +38,29 @@ const Admin = () => {
         id="msg_box"
         rows="7"
         cols="40"
-        onkeydown="confirm(event)"
+        onkeydown={() => {
+          confirm(event);
+        }}
         style="margin-top: 300px"
       ></textarea>
       <br />
       <input
         type="button"
         value="發送"
-        onClick="send()"
+        onSubmit={() => {
+          send();
+        }}
         style="width: 50px; height: 50px"
       />
     </div>
   );
 };
 
+export default Admin;
+
 // 存储用户名到全局变量,握手成功后发送给服务器
+
 var uname = prompt("請輸入名稱", "user" + uuid(8, 16));
-console.log("fuck");
 
 var ws = new WebSocket("ws://127.0.0.1:1234");
 
@@ -55,13 +69,13 @@ ws.onopen = function () {
   listMsg(data);
 };
 
-/**
- * 分析服务器返回信息
- *
- * msg.type : user 普通信息;system 系统信息;handshake 握手信息;login 登陆信息; logout 退出信息;
- * msg.from : 消息来源
- * msg.content: 消息内容
- */
+// /**
+//  * 分析服务器返回信息
+//  *
+//  * msg.type : user 普通信息;system 系统信息;handshake 握手信息;login 登陆信息; logout 退出信息;
+//  * msg.from : 消息来源
+//  * msg.content: 消息内容
+//  */
 ws.onmessage = function (e) {
   var msg = JSON.parse(e.data);
   var sender, user_name, name_list, change_type;
@@ -108,13 +122,13 @@ window.onbeforeunload = function () {
   ws.close();
 };
 
-/**
- * 在输入框内按下回车键时发送消息
- *
- * @param event
- *
- * @returns {boolean}
- */
+// /**
+//  * 在输入框内按下回车键时发送消息
+//  *
+//  * @param event
+//  *
+//  * @returns {boolean}
+//  */
 function confirm(event) {
   var key_num = event.keyCode;
   if (13 == key_num) {
@@ -145,9 +159,9 @@ function send() {
   }
 }
 
-/**
- * 将消息内容添加到输出框中,并将滚动条滚动到最下方
- */
+// /**
+//  * 将消息内容添加到输出框中,并将滚动条滚动到最下方
+//  */
 function listMsg(data) {
   var msg_list = document.getElementById("msg_list");
   var msg = document.createElement("p");
@@ -157,13 +171,13 @@ function listMsg(data) {
   msg_list.scrollTop = msg_list.scrollHeight;
 }
 
-/**
- * 处理用户登陆消息
- *
- * @param user_name 用户名
- * @param type  login/logout
- * @param name_list 用户列表
- */
+// /**
+//  * 处理用户登陆消息
+//  *
+//  * @param user_name 用户名
+//  * @param type  login/logout
+//  * @param name_list 用户列表
+//  */
 function dealUser(user_name, type, name_list) {
   var user_list = document.getElementById("user_list");
   var user_num = document.getElementById("user_num");
@@ -185,22 +199,22 @@ function dealUser(user_name, type, name_list) {
   listMsg(data);
 }
 
-/**
- * 将数据转为json并发送
- * @param msg
- */
+// /**
+//  * 将数据转为json并发送
+//  * @param msg
+//  */
 function sendMsg(msg) {
   var data = JSON.stringify(msg);
   ws.send(data);
 }
 
-/**
- * 生产一个全局唯一ID作为用户名的默认值;
- *
- * @param len
- * @param radix
- * @returns {string}
- */
+// /**
+//  * 生产一个全局唯一ID作为用户名的默认值;
+//  *
+//  * @param len
+//  * @param radix
+//  * @returns {string}
+//  */
 function uuid(len, radix) {
   var chars =
     "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split("");
@@ -226,4 +240,3 @@ function uuid(len, radix) {
 
   return uuid.join("");
 }
-export default Admin;

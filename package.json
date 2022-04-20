@@ -23,7 +23,8 @@
     "parcel": "^2.4.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "react-router-dom": "^5.2.0"
+    "react-router-dom": "^5.2.0",
+    "websocket": "^1.0.34"
   },
   "browserslist": [
     "last 2 Chrome versions"

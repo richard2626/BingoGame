@@ -15,14 +15,14 @@ const App = () => {
           </Link>
         </header>
         <Switch>
-          <Route exact path="/admin">
+          <Route path="/admin">
             <Admin />
-          </Route>
-          <Route path="/">
-            <SearchParams />
           </Route>
           <Route path="/details/:id">
             <Details />
+          </Route>
+          <Route path="/">
+            <SearchParams />
           </Route>
         </Switch>
       </Router>
