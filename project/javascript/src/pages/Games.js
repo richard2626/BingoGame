@@ -8,6 +8,7 @@ export default function Games(props) {
     const [bingoList, setBingoList] = useState(array.fill(0, 0, 25));
     const [theme, setTheme] = useState("bg-indigo-200 hover:bg-indigo-300")
     const [messageInput, setMessageInput] = useState("")
+    const [onlinenum , setOnlinenum] = useState("0")
 
     const handleButtonClicked = (event) => {
         switch (mode) {
@@ -26,7 +27,6 @@ export default function Games(props) {
                 break;
         }
     }
-
     const confirmTable = async () => {
         const result = await Swal.fire({
             icon: "info",
@@ -43,6 +43,7 @@ export default function Games(props) {
             setTheme("")
         }
     }
+    
 
     const sendMessage = (event) =>{
         event.preventDefault()
@@ -71,21 +72,22 @@ export default function Games(props) {
                         </form>
                     </div>
                 </div>
-                <div className="bg-slate-300 w-80 h-80 pt-3 text-center px-auto grid grid-cols-5" id="bingoTable">
+                <div className="bg-slate-300 w-80 h-80  text-center p-auto grid grid-cols-5" id="bingoTable">
                     {/* bingo buttons */}
                     {bingoList.map((item, index) => (
-                        <button className={`${theme} w-12 h-12 text-amber-600 rounded-md border-2 border-solid border-gray-500 disabled:cursor-not-allowed text-lg font-bold`}
+                        <button className={`${theme} text-indigo-200 hover:text-indigo-300 w-12 h-12 text-amber-600 rounded-md border-2 border-solid border-gray-500 disabled:cursor-not-allowed disabled:bg-indigo-300 disabled:text-zinc-50 text-lg font-bold`}
                             value={index} onClick={handleButtonClicked} disabled={(mode === "picking" && bingoList[index] !== 0)} key={`${index}${item}${mode}`}>{item}</button>
                     ))}
                 </div>
                 <div className="w-1/5 bg-red-100 flex flex-col justify-between py-2">
-                    <div className="">
+                    <div className="place-self-auto">
+                        目前在線：{onlinenum} <br />
                         模式：{mode}<br />
                         <span hidden={number === 26}>現在選擇：{number}</span>
                     </div>
-
+                    
                     <div className="">
-                        <button className="bg-indigo-200 py-1 px-2 rounded-lg hover:bg-indigo-300"
+                        <button className="bg-indigo-200 py-1 px-2 rounded-lg hover:bg-indigo-300 "
                             hidden={!(number === 26 && (mode === "picking" || mode === "changing"))} onClick={confirmTable}>確定/修改排版</button>
                     </div>
                 </div>
