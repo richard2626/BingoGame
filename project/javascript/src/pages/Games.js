@@ -52,7 +52,7 @@ export default function Games(props) {
 
     return (
         <div className="bg-indigo-50 text-center w-full h-400 space-y-2">
-            <div className="h-11 w-full">none</div>
+            <div className="h-11 w-full"></div>
 
             <div className="flex flex-row bg-indigo-100 text-center w-full h-600 justify-center" >
                 <div className="flex flex-col justify-between w-1/5 bg-red-100 py-2 px-1" id="notificationBar">
@@ -71,7 +71,7 @@ export default function Games(props) {
                         </form>
                     </div>
                 </div>
-                <div className="bg-slate-300 w-80 h-80 pt-10 text-center px-10" id="bingoTable">
+                <div className="bg-slate-300 w-80 h-80 pt-3 text-center px-auto grid grid-cols-5" id="bingoTable">
                     {/* bingo buttons */}
                     {bingoList.map((item, index) => (
                         <button className={`${theme} w-12 h-12 text-amber-600 rounded-md border-2 border-solid border-gray-500 disabled:cursor-not-allowed text-lg font-bold`}
@@ -90,7 +90,6 @@ export default function Games(props) {
                     </div>
                 </div>
             </div>
-            <div className="bg-slate-200 w-10 h-80 object-right">1</div>
         </div>
 
     )
