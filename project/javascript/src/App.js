@@ -14,13 +14,18 @@ const client = new W3CWebSocket("ws://127.0.0.1:1234")
 export function App() {
   // username is unique uuid
   const [username, setUsername] = useState("undefined")
+  const [messages,setMessages] = useState([])
+  const [sendMessage,setSendMessage] = useState("")
 
   const sendMsg = (data) => {
+    console.log(data)
+    if(client)
     client.send(JSON.stringify(data))
   }
 
   const handleMessage = (event) => {
     const message = JSON.parse(event.data)
+    console.log(message)
     let sender, user_name, name_list, change_type;
 
     switch (message.type) {
@@ -28,7 +33,7 @@ export function App() {
         sender = "系統訊息"
         break;
       case "user":
-        sender = msg.form
+        sender = message.form
         break;
       case "handshake":
         const name = uuidv4().substring(0, 7);
@@ -48,9 +53,13 @@ export function App() {
     }
 
     console.log(`${sender}: ${message.content}`)
+    setMessages([...message,{
+      "sender": sender,
+      "content": content,
+    }])
   }
 
-  const handleWindowClose = (event) => {
+  const handleWindowClose = async (event) => {
     event.preventDefault()
     event.returnValue = ""
 
@@ -92,6 +101,15 @@ export function App() {
     console.log(user_info)
     client.close()
   }
+  
+  useEffect(()=>{
+    if(sendMessage !== ""){
+      sendMsg({
+        type: "send",
+        content: sendMessage
+      })
+    }
+  },[sendMessage])
 
   return (
     <div className="bg-blue-200">
@@ -109,7 +127,7 @@ export function App() {
             <Admin />
           </Route>
           <Route path="/games">
-            <Game />
+            <Game pack={{messages: messages,sendMessage: sendMessage,setSendMessage: setSendMessage}}/>
           </Route>
           <Route path="/">
             <Home />

@@ -1,11 +1,13 @@
 import { useState } from "react"
 import Swal from "sweetalert2"
 
-export default function Games() {
+export default function Games(props) {
     const [number, setNumber] = useState(1);
     const [mode, setMode] = useState("picking") // ["picking"|"gaming"|"changing"]
     const array = new Array(25)
     const [bingoList, setBingoList] = useState(array.fill(0, 0, 25));
+    const [theme, setTheme] = useState("bg-indigo-200 hover:bg-indigo-300")
+    const [messageInput, setMessageInput] = useState("")
 
     const handleButtonClicked = (event) => {
         switch (mode) {
@@ -38,22 +40,42 @@ export default function Games() {
         } else if (result.isDenied) {
             Swal.fire("進入修改模式", "", "info")
             setMode("changing")
+            setTheme("")
         }
+    }
+
+    const sendMessage = (event) =>{
+        event.preventDefault()
+        props.pack.setSendMessage(messageInput)
+        setMessageInput("")
     }
 
     return (
         <div className="bg-indigo-50 text-center w-full h-400 space-y-2">
-            <div className="h-11 w-full"></div>
+            <div className="h-11 w-full">none</div>
 
             <div className="flex flex-row bg-indigo-100 text-center w-full h-600 justify-center" >
-                <div className="w-1/5 bg-red-100" id="notificationBar">
-                    Hello
+                <div className="flex flex-col justify-between w-1/5 bg-red-100 py-2 px-1" id="notificationBar">
+                    <div>
+                        {props["pack"]["messages"] ? props["pack"]["messages"].map((item, index) => (
+                            <div key={item}>
+                                {item.sender}: {item.content}
+                            </div>
+                        )) : <div>無訊息</div>}
+                    </div>
+                    <div className="">
+                        <form onSubmit={sendMessage} className="flex flex-row space-x-1">
+                            <input className="rounded-md w-full px-1" value={messageInput} onChange={(event)=>{setMessageInput(event.target.value)}} placeholder="點此傳遞訊息">
+                            </input>
+                            <button className="hidden md:block px-1 bg-blue-200 hover:bg-blue-300 rounded-md">send</button>
+                        </form>
+                    </div>
                 </div>
-                <div className="bg-slate-300 w-80 h-80  ml-1 mr-1 text-center content-center px-auto grid grid-cols-5 gap-3" id="bingoTable">
+                <div className="bg-slate-300 w-80 h-80 pt-10 text-center px-10" id="bingoTable">
                     {/* bingo buttons */}
                     {bingoList.map((item, index) => (
-                        <button className="bg-indigo-200 w-12 h-12 text-amber-600 rounded-md border-2 border-solid border-gray-500  hover:bg-indigo-300 disabled:cursor-not-allowed disabled:bg-indigo-300 disabled:text-neutral-50 text-lg font-bold "
-                            value={index} onClick={handleButtonClicked} disabled={(mode === "picking"&& bingoList[index] !== 0)}>{item}</button>
+                        <button className={`${theme} w-12 h-12 text-amber-600 rounded-md border-2 border-solid border-gray-500 disabled:cursor-not-allowed text-lg font-bold`}
+                            value={index} onClick={handleButtonClicked} disabled={(mode === "picking" && bingoList[index] !== 0)} key={`${index}${item}${mode}`}>{item}</button>
                     ))}
                 </div>
                 <div className="w-1/5 bg-red-100 flex flex-col justify-between py-2">
@@ -68,6 +90,7 @@ export default function Games() {
                     </div>
                 </div>
             </div>
+            <div className="bg-slate-200 w-10 h-80 object-right">1</div>
         </div>
 
     )
