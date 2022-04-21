@@ -1,10 +1,13 @@
 import asyncio
 import json
+from operator import le
 import websockets
 
 # 名字:websockets
 USERS = {}
 USERSPOINT = {}
+preparednum = 0
+usernum = 0
 
 
 async def chat(websocket, path):
@@ -27,8 +30,17 @@ async def chat(websocket, path):
 
         # 玩家發送條數
         elif data["type"] == 'sendpoint':
-            USERS[data["content"]]
+            {
+
+            }
         # 玩家準備完成
+        elif data["type"] == 'prepared':
+            preparednum = preparednum + 1
+            message = json.dumps(
+                {"type": "preparenum", "content": {preparednum},
+                    "user_list": list(USERS.keys())}
+            )
+
         # 玩家勝利
         #
 
@@ -36,10 +48,17 @@ async def chat(websocket, path):
         elif data["type"] == 'login':
             USERS[data["content"]] = websocket
             USERSPOINT[data["content"]] = websocket
+            usernum = len(USERS)
 
             if len(USERS) != 0:  # asyncio.wait doesn't accept an empty list
                 message = json.dumps(
                     {"type": "login", "content": data["content"], "user_list": list(USERS.keys())})
+
+                playerinfo = json.dumps(
+                    {"type": "playernum", "content": {usernum}, "user_list": list(USERS.keys())})
+
+                await asyncio.wait([user.send(playerinfo) for user in USERS.values()])
+
         # 玩家退出
         elif data["type"] == 'logout':
             del USERS[data["content"]]

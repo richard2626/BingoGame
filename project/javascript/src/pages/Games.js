@@ -53,7 +53,7 @@ export default function Games() {
                     {/* bingo buttons */}
                     {bingoList.map((item, index) => (
                         <button className="bg-indigo-200 w-12 h-12 text-amber-600 rounded-md border-2 border-solid border-gray-500  hover:bg-indigo-300 disabled:cursor-not-allowed disabled:bg-indigo-300 disabled:text-neutral-50 text-lg font-bold "
-                            value={index} onClick={handleButtonClicked} disabled={(mode === "picking" |"gaming"&& bingoList[index] !== 0)}>{item}</button>
+                            value={index} onClick={handleButtonClicked} disabled={(mode === "picking"&& bingoList[index] !== 0)}>{item}</button>
                     ))}
                 </div>
                 <div className="w-1/5 bg-red-100 flex flex-col justify-between py-2">

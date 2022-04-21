@@ -5,6 +5,8 @@ import websockets
 # 名字:websockets
 USERS = {}
 
+usernum = 0
+
 
 async def chat(websocket, path):
     # 握手
@@ -23,12 +25,16 @@ async def chat(websocket, path):
             if len(USERS) != 0:  # asyncio.wait doesn't accept an empty list
                 message = json.dumps(
                     {"type": "user", "content": data["content"], "from": name})
+
         # 用户登录
         elif data["type"] == 'login':
             USERS[data["content"]] = websocket
+            usernum = len(USERS)
+            print(usernum)
             if len(USERS) != 0:  # asyncio.wait doesn't accept an empty list
                 message = json.dumps(
                     {"type": "login", "content": data["content"], "user_list": list(USERS.keys())})
+
         # 用户退出
         elif data["type"] == 'logout':
             del USERS[data["content"]]

@@ -5,8 +5,7 @@
     "lint": "eslint \"src/**/*.{js,jsx}\" --quiet"
   },
   "dependencies": {
-    "prettier": "^2.6.2"
+    "prettier": "^2.6.2",
+    "websocket": "^1.0.34"
   }
-  
 }
-
