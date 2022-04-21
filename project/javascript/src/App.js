@@ -19,7 +19,6 @@ export function App() {
 
   const sendMsg = (data) => {
     console.log(data)
-    if(client)
     client.send(JSON.stringify(data))
   }
 
@@ -28,12 +27,12 @@ export function App() {
     console.log(message)
     let sender, user_name, name_list, change_type;
 
-    switch (message.type) {
+    switch (message["type"]) {
       case "system":
         sender = "系統訊息"
         break;
       case "user":
-        sender = message.form
+        sender = message["from"]
         break;
       case "handshake":
         const name = uuidv4().substring(0, 7);
@@ -46,17 +45,19 @@ export function App() {
         return;
       case "login":
       case "logout":
-        user_name = message.content;
-        name_list = message.user_list;
-        change_type = message.message.type;
+        user_name = message["content"];
+        name_list = message["user_list"];
+        change_type = message["type"];
         dealUser(user_name, change_type, name_list)
     }
 
-    console.log(`${sender}: ${message.content}`)
-    setMessages([...message,{
+    console.log(`${sender}: ${message["content"]}`)
+    let package_temp = messages
+    package_temp.append({
       "sender": sender,
       "content": content,
-    }])
+    })
+    setMessages(package_temp)
   }
 
   const handleWindowClose = async (event) => {

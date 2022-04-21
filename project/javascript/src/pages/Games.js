@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Swal from "sweetalert2"
 
 export default function Games(props) {
@@ -50,6 +50,10 @@ export default function Games(props) {
         props.pack.setSendMessage(messageInput)
         setMessageInput("")
     }
+
+    useEffect(()=>{
+        console.log(props.pack.messages)
+    },[props.pack.messages])
 
     return (
         <div className="bg-indigo-50 text-center w-full h-400 space-y-2">

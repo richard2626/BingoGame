@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 
 const Admin = () => {
-  const [number, setNumber] = useState("start");
-  setNumber(18);
+  const [number, setNumber] = useState(18);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+
+  }, []);
 
   return (
     <div
@@ -55,8 +56,6 @@ const Admin = () => {
 };
 
 export default Admin;
-
-// 存储用户名到全局变量,握手成功后发送给服务器
 
 
 
