@@ -12,14 +12,18 @@ import Nav from "./components/nav"
 const client = new W3CWebSocket("ws://127.0.0.1:1234")
 
 export function App() {
-  // username is unique uuid
-  const [username, setUsername] = useState("undefined")
-  const [messages,setMessages] = useState([])
-  const [sendMessage,setSendMessage] = useState("")
-  const [online,setOnline] = useState(0)
+  // unique uuid
+  const [uid, setUid] = useState("undefined")
+  const [username, setUsername] = useState("anonymous")
+  const [messages, setMessages] = useState([])
+  const [sendMessage, setSendMessage] = useState("")
+  const [online, setOnline] = useState(0)
+  const [mode, setMode] = useState("picking") // ["picking"|"gaming"|"changing"]
+  //const [temp,setTemp] = useState([]) // it could be anything
+  const array = new Array(25)
+  const [bingoList,setBingoList] = useState(array.fill(0, 0, 25))
 
   const sendMsg = (data) => {
-    //console.log(`ID: ${username}`)
     console.log(data)
     client.send(JSON.stringify(data))
   }
@@ -43,9 +47,8 @@ export function App() {
         new_message = `${sender}: ${message["content"]}`
         break;
       case "handshake":
-        console.log("shake shake")
         const name = uuidv4().substring(0, 7);
-        setUsername(name)
+        setUid(name)
         console.log(name)
         sendMsg({
           type: "login",
@@ -53,34 +56,27 @@ export function App() {
         })
         return;
       case "login":
-        console.log("I don't know")
+        console.log("Someone is here")
+        new_message = `${message["content"]} is here`
         break;
       case "logout":
-        console.log("someone left us")
         new_message = `${message["content"]} left us QAQ`
         //new_message = "QAQ"
         break;
+      case "change_name":
+        new_message = `${message["from"]} changed to ${message["to"]}`
+        break;
+      case "reject":
+        alert("game started already")
+        break;
     }
-
-    setMessages(messages =>[...messages,new_message])
-    
+    setMessages(messages => [...messages, new_message])
   }
 
   const handleWindowClose = async (event) => {
     event.preventDefault()
     event.returnValue = ""
-
-    /*console.log("closing the window")
-    var user_info = {
-      type: "logout",
-      content: username,
-    };
-    alert(`username: ${username}`)
-    sendMsg(user_info);
-    console.log(user_info)
-    client.close()*/
   }
-
 
   useEffect(() => {
     client.onopen = () => {
@@ -94,29 +90,35 @@ export function App() {
   }, [])
 
   useEffect(() => {
-    console.log(`username: ${username}`)
-  }, [username])
+    console.log(`uid: ${uid}`)
+  }, [uid])
 
-  const handleLogout = () => {
-    console.log("logging out")
-    var user_info = {
-      type: "logout",
-      content: username,
-    };
-    alert(`username: ${username}`)
-    sendMsg(user_info);
-    console.log(user_info)
-    client.close()
-  }
-  
-  useEffect(()=>{
-    if(sendMessage !== ""){
+  useEffect(() => {
+    if (sendMessage !== "") {
       sendMsg({
         type: "send",
         content: sendMessage
       })
     }
-  },[sendMessage])
+  }, [sendMessage])
+
+  useEffect(() => {
+    if (username !== "anonymous") {
+      sendMsg({
+        type: "update_name",
+        content: username
+      })
+    }
+  }, [username])
+
+  useEffect(() => {
+    if (mode === "gaming") {
+      sendMsg({
+        "type": "ready",
+        "content": bingoList,
+      })
+    }
+  }, [mode])
 
   return (
     <div className="bg-blue-200">
@@ -134,11 +136,18 @@ export function App() {
             <Admin />
           </Route>
           <Route path="/games">
-            <Game pack={{messages: messages,
+            <Game pack={{
+              messages: messages,
               sendMessage: sendMessage,
               setSendMessage: setSendMessage,
-              online: online  
-            }}/>
+              online: online,
+              username: username,
+              setUsername: setUsername,
+              mode: mode,
+              setMode: setMode,
+              bingoList: bingoList,
+              setBingoList: setBingoList,
+            }} />
           </Route>
           <Route path="/">
             <Home />
