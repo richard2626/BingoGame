@@ -16,8 +16,10 @@ export function App() {
   const [username, setUsername] = useState("undefined")
   const [messages,setMessages] = useState([])
   const [sendMessage,setSendMessage] = useState("")
+  const [online,setOnline] = useState(0)
 
   const sendMsg = (data) => {
+    //console.log(`ID: ${username}`)
     console.log(data)
     client.send(JSON.stringify(data))
   }
@@ -26,15 +28,22 @@ export function App() {
     const message = JSON.parse(event.data)
     console.log(message)
     let sender, user_name, name_list, change_type;
-
+    let new_message = ""
+    console.log("Hi")
+    setOnline(message["online"])
     switch (message["type"]) {
       case "system":
+        console.log("system")
         sender = "系統訊息"
+        new_message = `SYSTEM: ${message["content"]}`
         break;
       case "user":
+        console.log("user")
         sender = message["from"]
+        new_message = `${sender}: ${message["content"]}`
         break;
       case "handshake":
+        console.log("shake shake")
         const name = uuidv4().substring(0, 7);
         setUsername(name)
         console.log(name)
@@ -44,20 +53,17 @@ export function App() {
         })
         return;
       case "login":
+        console.log("I don't know")
+        break;
       case "logout":
-        user_name = message["content"];
-        name_list = message["user_list"];
-        change_type = message["type"];
-        dealUser(user_name, change_type, name_list)
+        console.log("someone left us")
+        new_message = `${message["content"]} left us QAQ`
+        //new_message = "QAQ"
+        break;
     }
 
-    console.log(`${sender}: ${message["content"]}`)
-    let package_temp = messages
-    package_temp.append({
-      "sender": sender,
-      "content": content,
-    })
-    setMessages(package_temp)
+    setMessages(messages =>[...messages,new_message])
+    
   }
 
   const handleWindowClose = async (event) => {
@@ -128,7 +134,11 @@ export function App() {
             <Admin />
           </Route>
           <Route path="/games">
-            <Game pack={{messages: messages,sendMessage: sendMessage,setSendMessage: setSendMessage}}/>
+            <Game pack={{messages: messages,
+              sendMessage: sendMessage,
+              setSendMessage: setSendMessage,
+              online: online  
+            }}/>
           </Route>
           <Route path="/">
             <Home />
