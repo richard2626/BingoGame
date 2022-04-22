@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Swal from "sweetalert2"
 
 export default function Games(props) {
@@ -8,7 +8,6 @@ export default function Games(props) {
     const [bingoList, setBingoList] = useState(array.fill(0, 0, 25));
     const [theme, setTheme] = useState("bg-indigo-200 hover:bg-indigo-300")
     const [messageInput, setMessageInput] = useState("")
-    const [onlinenum , setOnlinenum] = useState("0")
 
     const handleButtonClicked = (event) => {
         switch (mode) {
@@ -51,6 +50,10 @@ export default function Games(props) {
         setMessageInput("")
     }
 
+    useEffect(()=>{
+        console.log(props.pack.messages)
+    },[props.pack.messages])
+
     return (
         <div className="bg-indigo-50 text-center w-full h-400 space-y-2">
             <div className="h-11 w-full"></div>
@@ -59,8 +62,8 @@ export default function Games(props) {
                 <div className="flex flex-col justify-between w-1/5 bg-red-100 py-2 px-1" id="notificationBar">
                     <div>
                         {props["pack"]["messages"] ? props["pack"]["messages"].map((item, index) => (
-                            <div key={item}>
-                                {item.sender}: {item.content}
+                            <div key={item} className="text-left">
+                                {item}
                             </div>
                         )) : <div>無訊息</div>}
                     </div>
@@ -81,7 +84,7 @@ export default function Games(props) {
                 </div>
                 <div className="w-1/5 bg-red-100 flex flex-col justify-between py-2">
                     <div className="place-self-auto">
-                        目前在線：{onlinenum} <br />
+                        目前在線：{props["pack"]["online"]} <br />
                         模式：{mode}<br />
                         <span hidden={number === 26}>現在選擇：{number}</span>
                     </div>

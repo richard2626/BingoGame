@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 
-const Admin = () => {
-  const [number, setNumber] = useState("start");
-  setNumber(18);
+const Admin = (props) => {
+  const [number, setNumber] = useState(18);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+
+  }, []);
 
   return (
     <div
@@ -16,8 +17,7 @@ const Admin = () => {
       <div style="width: 200px; border: 1px solid gray; height: 100px">
         <div style="width: 200px; height: 80px; float: mid; text-align: left">
           <p>
-            <span>目前在線:</span>
-            <span id="user_num">0</span>
+            <span>目前在線:{props.pack.online}</span>
           </p>
           <div id="user_list" style="height: 50px"></div>
         </div>
@@ -55,8 +55,6 @@ const Admin = () => {
 };
 
 export default Admin;
-
-// 存储用户名到全局变量,握手成功后发送给服务器
 
 
 
