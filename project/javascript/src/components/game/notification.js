@@ -1,8 +1,22 @@
 import { useEffect, useState } from "react"
+import { useSelector } from "react-redux"
+import { store } from "../../redux/store"
 
 export default function Notification(props) {
     const [timeRemain,setTimeRemain] = useState(0)
     const [timeClass,setTimeClass] = useState("")
+
+    const [myTurn,setMyturn] = useState(useSelector(state => state.profile.myTurn))
+    const [username,setUsername] = useState(useSelector(state => state.profile.name))
+    const [mode,setMode] = useState(useSelector(state => state.profile.gamemode))
+    const [online,setOnline] = useState(useSelector(state=>state.profile.online))
+
+    store.subscribe(()=>{
+        setMyturn(store.getState().profile.myTurn)
+        setUsername(store.getState().profile.name)
+        setOnline(store.getState().profile.online)
+        setMode(store.getState().profile.gamemode)
+    })
 
     useEffect(()=>{
         if(timeRemain > 0){
@@ -10,19 +24,19 @@ export default function Notification(props) {
                 timeRemain(timeRemain - 1)
             },1000)
         }else if(timeRemain === 0){
-            props["pack"]["setNumberPicked"](0)
+            // props["pack"]["setNumberPicked"](0)
         }
     },[timeRemain])
 
     useEffect(()=>{
-        if(props["pack"]["myTurn"]){
+        if(myTurn){
             setTimeRemain(30)
             setTimeClass("visible")
         }else{
             setTimeRemain(0)
             setTimeClass("invisible")
         }
-    },[props["pack"]["myTurn"]])    
+    },[myTurn])    
 
     return (
         <div className="w-full bg-red-100 flex flex-col justify-between py-2 h-full">
@@ -30,9 +44,9 @@ export default function Notification(props) {
                 <div className={`${timeClass}`} id="countdown" >
                     TimeLeft: {timeRemain}
                 </div>
-                暱稱：{props["pack"]["username"]}<br />
-                目前在線：{props["pack"]["online"]} <br />
-                模式：{props["pack"]["mode"]}<br />
+                暱稱：{username}<br />
+                目前在線：{online} <br />
+                模式：{mode}<br />
                 <span hidden={props["pack"]["number"] === 26}>現在選擇：{props["pack"]["number"]}</span>
             </div>
 
