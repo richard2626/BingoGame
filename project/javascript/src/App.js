@@ -60,18 +60,17 @@ export function App() {
         })
         return;
       case "login":
-        console.log("Someone is here")
-        new_message = `${message["content"]} is here`
+        //new_message = `${message["content"]} 已加入`
         break;
       case "logout":
-        new_message = `${message["content"]} left us QAQ`
-        //new_message = "QAQ"
+        new_message = `${message["content"]} 離開了遊戲`
         break;
       case "player_send_number":
         new_message = `${message["content"]}`
         break;
       case "change_name":
-        new_message = `${message["from"]} changed to ${message["to"]}`
+        //new_message = `${message["from"]} changed to ${message["to"]}`
+        new_message = `${message["to"]} 已加入`
         break;
       case "reject":
         alert("遊戲不開放")
@@ -107,6 +106,7 @@ export function App() {
         content: sendMessage
       })
     }
+    setSendMessage("")
   }, [sendMessage])
   
   useEffect(() => {

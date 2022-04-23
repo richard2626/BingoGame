@@ -11,6 +11,8 @@ preparednum = 0
 online_people = 0
 cnt_number = 1
 ingame = False
+lefterror = ""
+
 
 """
 
@@ -37,6 +39,7 @@ async def chat(websocket, path):
     async for message in websocket:
         global cnt_number
         global ingame
+        global lefterror
         data = json.loads(message)
         isReturn = True
         message = ''
@@ -130,25 +133,36 @@ async def chat(websocket, path):
             }
 
         # 玩家退出
-        elif data["type"] == 'logout':
-            del USERS[data["content"]]
-            if len(USERS) != 0:  # asyncio.wait doesn't accept an empty list
-                message = {"type": "logout",
-                           "content": data["content"],
-                           "user_list": list(USERS.keys()),
-                           }
-        # 群發
+        # elif data["type"] == 'logout':
+        #     del USERS[data["content"]]
+        #     if len(USERS) != 0:  # asyncio.wait doesn't accept an empty list
+        #         message = {"type": "logout",
+        #                    "content": data["content"],
+        #                    "user_list": list(USERS.keys()), }
 
+    # 群發
         message["online"] = len(USERS)
+        # 如果有人離開
+        if lefterror != "":
+            message_lefterror = {
+                "type": "logout",
+                "content": lefterror,
+                "user_list": list(USERS.keys()),
+            }
+            await asyncio.wait([sending_message(message_lefterror, value["ws"], key) for key, value in USERS.items()])
+            lefterror = ""
+            print("someoneleft")
         if isReturn:
             await asyncio.wait([sending_message(message, value["ws"], key) for key, value in USERS.items()])
 
 
 async def sending_message(message, ws, key):
+    global lefterror
     message["name"] = USERS[key]["name"]
     try:
         await ws.send(json.dumps(message))
     except:
+        lefterror = USERS[key]["name"]
         del USERS[key]
 
 start_server = websockets.serve(chat, "127.0.0.1", PORT)
