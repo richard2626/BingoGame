@@ -1,10 +1,29 @@
 import { useEffect } from "react"
+import Swal from "sweetalert2"
 
 export default function Adminnotification(props) {
 
     useEffect(() => {
-        props["pack"]["setUsername"]("Admin")
+        setName()
     }, [])
+
+    const setName = async () => {
+        let name = ""
+        Swal.fire({
+            title: "請輸入玩家名稱",
+            input: "text",
+            inputAttributes: {
+                autocapitalize: "off",
+            },
+            showCancelButton: false,
+            confirmButtonText: "確定",
+            showLoaderOnConfirm: true,
+            allowOutsideClick: false,
+            preConfirm: (name) => {
+                props["pack"]["setUsername"](name)
+            }
+        })
+    }
     
 
 
@@ -18,7 +37,7 @@ export default function Adminnotification(props) {
 
             {/*<div className="">
                 <button className="bg-indigo-200 py-1 px-2 rounded-lg hover:bg-indigo-300 "
-                    onClick={props["pack"]["randomSort"]} hidden={props["pack"]["mode"] === "gaming"}>結束遊戲</button>
+                    onClick={props["pack"]["randomSort"]} hidden={props["pack"]["mode"] === "picking"}>結束遊戲</button>
             </div>*/}
             {/*<div className="">
                 <button className="bg-indigo-200 py-1 px-2 rounded-lg hover:bg-indigo-300 "

@@ -107,7 +107,8 @@ async def chat(websocket, path):
 
             temp_name = "anonymous{number}".format(number=cnt_number)
             cnt_number += 1
-            USERS[data["content"]] = {"ws": websocket, "name": temp_name}
+            USERS[data["content"]] = {"ws": websocket,
+                                      "name": temp_name, "ready": False}
 
             if len(USERS) != 0:  # asyncio.wait doesn't accept an empty list
                 message = {"type": "login",

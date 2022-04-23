@@ -98,7 +98,7 @@ export default function Games(props) {
                             value={index}
                             onClick={handleButtonClicked}
                             disabled={(props["pack"]["mode"] === "picking" && props["pack"]["bingoList"][index] !== 0)} 
-                            key={`${index}${item}${props["pack"]["mode"]}`}>{item}</button>
+                            key={`${index}`}>{item}</button>
                 
                     ))}
                 </div>

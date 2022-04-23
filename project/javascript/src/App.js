@@ -20,6 +20,7 @@ export function App() {
   const [online, setOnline] = useState(0)
   const [mode, setMode] = useState("picking") // ["picking"|"gaming"|"changing"]
   const [buttonValue, setButtonValue] = useState("0")
+  const [ingame, setIngame] = useState(false)
 
   //const [temp,setTemp] = useState([]) // it could be anything
   const array = new Array(25)
@@ -73,7 +74,7 @@ export function App() {
         new_message = `${message["from"]} changed to ${message["to"]}`
         break;
       case "reject":
-        alert("game started already")
+        alert("遊戲不開放")
         break;
     }
     setMessages(messages => [...messages, new_message])
@@ -135,6 +136,8 @@ export function App() {
     }
   }, [mode])
 
+
+
   return (
     <div className="bg-blue-200">
       <Router>
@@ -147,6 +150,7 @@ export function App() {
 
         {/* Routes */}
         <Switch>
+          {/*
           <Route path="/admin">
             <Admin pack={
               {
@@ -158,11 +162,10 @@ export function App() {
                 online : online,
                 mode: mode,
                 setMode :setMode,
-                
-                
               }
             }/>
           </Route>
+          */}
           <Route path="/games">
             <Game pack={{
               messages: messages,

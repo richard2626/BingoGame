@@ -24,7 +24,7 @@ export default function Messages(props) {
         <div className="flex flex-col justify-between h-full">
             <div className="flex flex-col overflow-auto h-full">
                 {props["pack"]["messages"] ? props["pack"]["messages"].map((item, index) => (
-                    <div key={item} className="text-left">
+                    <div key={`${item}`} className="text-left">
                         {item}
                     </div>
                 )) : <div>無訊息</div>}
