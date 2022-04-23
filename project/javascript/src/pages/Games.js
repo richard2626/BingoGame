@@ -12,7 +12,7 @@ export default function Games(props) {
         switch (props["pack"]["mode"]) {
             case "picking":
                 //setBingoList(bingoList[event.target.value] = number)
-                console.log(event.target.key)
+                console.log(props["pack"]["bingoList"])
                 let array = props["pack"]["bingoList"]
                 array[event.target.value] = number
                 props["pack"]["setBingoList"](array)
@@ -50,13 +50,13 @@ export default function Games(props) {
         console.log(props.pack.messages)
     }, [props.pack.messages])
 
+    // set name when window is ready
     useEffect(() => {
         setName()
     }, [])
 
     //輸入玩家名稱
     const setName = async () => {
-        let name = ""
         Swal.fire({
             title: "請輸入玩家名稱",
             input: "text",
@@ -99,10 +99,10 @@ export default function Games(props) {
                 <div className="bg-slate-300 w-80 h-80 text-center grid grid-cols-5 justify-center px-1" id="bingoTable">
                     {/* 賓果按鈕 */}
                     {props["pack"]["bingoList"].map((item, index) => (
-                        <button className={`${theme} text-indigo-200 hover:text-indigo-300 w-12 h-12 text-amber-600 rounded-md border-2 border-solid border-gray-500 disabled:cursor-not-allowed disabled:bg-indigo-300 disabled:text-zinc-50 text-lg font-bold`}
+                        <button className={`${theme} text-red-300 hover:text-indigo-300 w-12 h-12 rounded-md border-2 border-solid border-gray-500 disabled:cursor-not-allowed disabled:bg-indigo-300 disabled:text-zinc-100 text-lg font-bold`}
                             value={index}
                             onClick={handleButtonClicked}
-                            disabled={(props["pack"]["mode"] === "picking" && props["pack"]["bingoList"][index] !== 0)} 
+                            disabled={!((props["pack"]["mode"] === "picking" && props["pack"]["bingoList"][index] == false) || (props["pack"]["mode"] === "gaming" && props["pack"]["myTurn"]))} 
                             key={`${index}`}>{item}</button>
                 
                     ))}

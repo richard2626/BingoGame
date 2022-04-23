@@ -20,15 +20,15 @@ export function App() {
   const [online, setOnline] = useState(0)
   const [mode, setMode] = useState("picking") // ["picking"|"gaming"|"changing"]
   const [buttonValue, setButtonValue] = useState("0")
-
-
-  //const [temp,setTemp] = useState([]) // it could be anything
+  const [myTurn, setMyTurn] = useState(false)
   const array = new Array(25)
-  const [bingoList,setBingoList] = useState(array.fill(0, 0, 25))
+  const [bingoList, setBingoList] = useState(array.fill(0, 0, 25))
+  const [bingoPicked, setBinggoPicked] = useState(array.fill(false, 0, 25))
+  const [numberPicked, setNumberPicked] = useState(null)
 
   //檢查賓果條數 & 是否已按過
   const checkBingoList = new Array(25)
-  for(i = 0;i<25;i++){
+  for (i = 0; i < 25; i++) {
     checkBingoList[i] = new Array(2)
   }
 
@@ -37,11 +37,12 @@ export function App() {
     console.log(data)
     client.send(JSON.stringify(data))
   }
+
   //處理Server發來的訊息
   const handleMessage = (event) => {
     const message = JSON.parse(event.data)
     console.log(message)
-    let sender, user_name, name_list, change_type;
+    let sender;
     let new_message = ""
     console.log("Hi")
     setOnline(message["online"])
@@ -50,6 +51,13 @@ export function App() {
         console.log("system")
         sender = "系統訊息"
         new_message = `SYSTEM: ${message["content"]}`
+        console.log(`uid: ${uid}`)
+        console.log(`player ${typeof(player)}`)
+        if (message["player"] === uid) {
+          // it's my turn
+          setMyTurn(true)
+          console.log("myturn!!")
+        }
         break;
       case "user":
         console.log("user")
@@ -114,15 +122,17 @@ export function App() {
     }
     setSendMessage("")
   }, [sendMessage])
-  
+
   useEffect(() => {
-    if (buttonValue !== "0"){
-      sendMsg({
-        type: "sendnumber",
-        content: buttonValue,
-      })
+    if (buttonValue !== "0") {
+      if (myTurn) {
+        sendMsg({
+          type: "sendnumber",
+          content: buttonValue,
+        })
+      }
     }
-  },[buttonValue])
+  }, [buttonValue])
 
   useEffect(() => {
     if (username !== "anonymous") {
@@ -184,9 +194,12 @@ export function App() {
               setMode: setMode,
               bingoList: bingoList,
               setBingoList: setBingoList,
-              checkBingoList:checkBingoList,
+              checkBingoList: checkBingoList,
               buttonValue: buttonValue,
               setButtonValue: setButtonValue,
+              myTurn: myTurn,
+              setMyTurn: setMyTurn,
+              setNumberPicked: setNumberPicked
             }} />
           </Route>
           <Route path="/">

@@ -1,7 +1,35 @@
+import { useEffect, useState } from "react"
+
 export default function Notification(props) {
+    const [timeRemain,setTimeRemain] = useState(0)
+    const [timeClass,setTimeClass] = useState("")
+
+    useEffect(()=>{
+        if(timeRemain > 0){
+            setTimeout(()=>{
+                timeRemain(timeRemain - 1)
+            },1000)
+        }else if(timeRemain === 0){
+            props["pack"]["setNumberPicked"](0)
+        }
+    },[timeRemain])
+
+    useEffect(()=>{
+        if(props["pack"]["myTurn"]){
+            setTimeRemain(30)
+            setTimeClass("visible")
+        }else{
+            setTimeRemain(0)
+            setTimeClass("invisible")
+        }
+    },[props["pack"]["myTurn"]])    
+
     return (
         <div className="w-full bg-red-100 flex flex-col justify-between py-2 h-full">
             <div className="place-self-auto">
+                <div className={`${timeClass}`} id="countdown" >
+                    TimeLeft: {timeRemain}
+                </div>
                 暱稱：{props["pack"]["username"]}<br />
                 目前在線：{props["pack"]["online"]} <br />
                 模式：{props["pack"]["mode"]}<br />
