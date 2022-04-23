@@ -21,9 +21,6 @@ export default function Games(props) {
             case "gaming":
                 props["pack"]["setButtonValue"](props["pack"]["bingoList"][event.target.value])
                 console.log(props["pack"]["checkBingoList"][event.target.value])
-
-
-
                 break;
             case "erase":
                 break;
@@ -105,7 +102,7 @@ export default function Games(props) {
                         <button className={`${theme} text-indigo-200 hover:text-indigo-300 w-12 h-12 text-amber-600 rounded-md border-2 border-solid border-gray-500 disabled:cursor-not-allowed disabled:bg-indigo-300 disabled:text-zinc-50 text-lg font-bold`}
                             value={index}
                             onClick={handleButtonClicked}
-                    disabled={(props["pack"]["mode"] === "picking" && props["pack"]["bingoList"][index] !== 0)} 
+                            disabled={(props["pack"]["mode"] === "picking" && props["pack"]["bingoList"][index] !== 0)} 
                             key={`${index}`}>{item}</button>
                 
                     ))}
