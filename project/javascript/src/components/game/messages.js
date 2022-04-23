@@ -1,8 +1,11 @@
 import { useEffect, useState, useRef } from "react"
 
+import { useDispatch, useSelector } from "react-redux"
 
 export default function Messages(props) {
     const [messageInput, setMessageInput] = useState("")
+
+    const messages = useSelector(state => state.profile.messages)
 
     const sendMessage = (event) => {
         event.preventDefault()
@@ -18,12 +21,12 @@ export default function Messages(props) {
 
     useEffect(() => {
         scrollToBottom()
-    }, [props["pack"]["messages"]])
+    }, [messages])
 
     return (
         <div className="flex flex-col justify-between h-full">
             <div className="flex flex-col overflow-auto h-full">
-                {props["pack"]["messages"] ? props["pack"]["messages"].map((item, index) => (
+                {messages ? messages.map((item, index) => (
                     <div key={`${item}${index}`} className="text-left">
                         {item}
                     </div>

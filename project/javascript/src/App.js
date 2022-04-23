@@ -9,22 +9,27 @@ import { w3cwebsocket as W3CWebSocket } from "websocket"
 import { v4 as uuidv4 } from "uuid"
 import Nav from "./components/nav"
 
+import { useDispatch, useSelector } from "react-redux";
+import { updateName, updateUUID, updateBingoList, updateBingoSelected, updateMessages, updateMyTurn, updateOnlineMember } from "./redux/actions"
+import { store } from "./redux/store";
+
 const client = new W3CWebSocket("ws://127.0.0.1:1234")
 
 export function App() {
   // unique uuid
-  const [uid, setUid] = useState("undefined")
-  const [username, setUsername] = useState("anonymous")
-  const [messages, setMessages] = useState([])
+  const dispatch = useDispatch()
+  const [username, setUsername] = useState(useSelector(state => state.profile.name))
+  const [mode, setMode] = useState(useSelector(state => state.profile.gamemode)) // ["picking"|"gaming"|"changing"]
+  const [myTurn, setMyTurn] = useState(useSelector(state => state.profile.myTurn))
+
   const [sendMessage, setSendMessage] = useState("")
-  const [online, setOnline] = useState(0)
-  const [mode, setMode] = useState("picking") // ["picking"|"gaming"|"changing"]
   const [buttonValue, setButtonValue] = useState("0")
-  const [myTurn, setMyTurn] = useState(false)
-  const array = new Array(25)
-  const [bingoList, setBingoList] = useState(array.fill(0, 0, 25))
-  const [bingoPicked, setBinggoPicked] = useState(array.fill(false, 0, 25))
-  const [numberPicked, setNumberPicked] = useState(null)
+
+  store.subscribe(() => {
+    setMode(store.getState().profile.mode)
+    setMyTurn(store.getState().profile.myTurn)
+    setUsername(store.getState().profile.username)
+  })
 
   //檢查賓果條數 & 是否已按過
   const checkBingoList = new Array(25)
@@ -45,17 +50,20 @@ export function App() {
     let sender;
     let new_message = ""
     console.log("Hi")
-    setOnline(message["online"])
+    dispatch(updateOnlineMember({
+      online: message["online"]
+    }))
     switch (message["type"]) {
       case "system":
         console.log("system")
         sender = "系統訊息"
         new_message = `SYSTEM: ${message["content"]}`
-        console.log(`uid: ${uid}`)
-        console.log(`player ${typeof(player)}`)
+        console.log(`player ${typeof (player)}`)
         if (message["player"] === uid) {
           // it's my turn
-          setMyTurn(true)
+          dispatch(updateMyTurn(
+            { myTurn: true }
+          ))
           console.log("myturn!!")
         }
         break;
@@ -66,7 +74,9 @@ export function App() {
         break;
       case "handshake":
         const name = uuidv4().substring(0, 7);
-        setUid(name)
+        dispatch(updateUUID({
+          uid: name
+        }))
         console.log(name)
         sendMsg({
           type: "login",
@@ -90,7 +100,9 @@ export function App() {
         alert("遊戲不開放")
         break;
     }
-    setMessages(messages => [...messages, new_message])
+    dispatch(updateMessages({
+      message: new_message
+    }))
   }
 
   const handleWindowClose = async (event) => {
@@ -108,10 +120,6 @@ export function App() {
       window.removeEventListener("beforeunload", handleWindowClose)
     }
   }, [])
-
-  useEffect(() => {
-    console.log(`uid: ${uid}`)
-  }, [uid])
 
   useEffect(() => {
     if (sendMessage !== "") {
@@ -152,8 +160,6 @@ export function App() {
     }
   }, [mode])
 
-
-
   return (
     <div className="bg-blue-200">
       <Router>
@@ -184,22 +190,10 @@ export function App() {
           */}
           <Route path="/games">
             <Game pack={{
-              messages: messages,
               sendMessage: sendMessage,
               setSendMessage: setSendMessage,
-              online: online,
-              username: username,
-              setUsername: setUsername,
-              mode: mode,
-              setMode: setMode,
-              bingoList: bingoList,
-              setBingoList: setBingoList,
-              checkBingoList: checkBingoList,
               buttonValue: buttonValue,
               setButtonValue: setButtonValue,
-              myTurn: myTurn,
-              setMyTurn: setMyTurn,
-              setNumberPicked: setNumberPicked
             }} />
           </Route>
           <Route path="/">
