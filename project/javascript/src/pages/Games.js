@@ -7,6 +7,7 @@ export default function Games(props) {
     const [number, setNumber] = useState(1);
     const [theme, setTheme] = useState("bg-indigo-200 hover:bg-indigo-300")
 
+    
     const handleButtonClicked = (event) => {
         switch (props["pack"]["mode"]) {
             case "picking":
@@ -18,6 +19,7 @@ export default function Games(props) {
                 setNumber(number + 1)
                 break;
             case "gaming":
+                props["pack"]["setButtonValue"](props["pack"]["bingoList"][event.target.value])
                 break;
             case "erase":
                 break;
@@ -89,11 +91,16 @@ export default function Games(props) {
                 <div className="hidden md:block w-1/5 bg-red-100 py-2 px-1">
                     <Messages pack={props["pack"]} />
                 </div>
+                {/*賓果盤*/}
                 <div className="bg-slate-300 w-80 h-80 text-center grid grid-cols-5 justify-center px-1" id="bingoTable">
-                    {/* bingo buttons */}
+                    {/* 賓果按鈕 */}
                     {props["pack"]["bingoList"].map((item, index) => (
                         <button className={`${theme} text-indigo-200 hover:text-indigo-300 w-12 h-12 text-amber-600 rounded-md border-2 border-solid border-gray-500 disabled:cursor-not-allowed disabled:bg-indigo-300 disabled:text-zinc-50 text-lg font-bold`}
-                            value={index} onClick={handleButtonClicked} disabled={(props["pack"]["mode"] === "picking" && props["pack"]["bingoList"][index] !== 0)} key={`${index}${item}${props["pack"]["mode"]}`}>{item}</button>
+                            value={index}
+                            onClick={handleButtonClicked}
+                            disabled={(props["pack"]["mode"] === "picking" && props["pack"]["bingoList"][index] !== 0)} 
+                            key={`${index}${item}${props["pack"]["mode"]}`}>{item}</button>
+                
                     ))}
                 </div>
                 <div className="hidden md:block w-1/5 bg-red-100 py-2 px-1">

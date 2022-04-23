@@ -19,15 +19,18 @@ export function App() {
   const [sendMessage, setSendMessage] = useState("")
   const [online, setOnline] = useState(0)
   const [mode, setMode] = useState("picking") // ["picking"|"gaming"|"changing"]
+  const [buttonValue, setButtonValue] = useState("0")
+
   //const [temp,setTemp] = useState([]) // it could be anything
   const array = new Array(25)
   const [bingoList,setBingoList] = useState(array.fill(0, 0, 25))
 
+  //發送訊息給Server
   const sendMsg = (data) => {
     console.log(data)
     client.send(JSON.stringify(data))
   }
-
+  //處理Server發來的訊息
   const handleMessage = (event) => {
     const message = JSON.parse(event.data)
     console.log(message)
@@ -62,6 +65,9 @@ export function App() {
       case "logout":
         new_message = `${message["content"]} left us QAQ`
         //new_message = "QAQ"
+        break;
+      case "player_send_number":
+        new_message = `${message["content"]}`
         break;
       case "change_name":
         new_message = `${message["from"]} changed to ${message["to"]}`
@@ -101,6 +107,15 @@ export function App() {
       })
     }
   }, [sendMessage])
+  
+  useEffect(() => {
+    if (buttonValue !== "0"){
+      sendMsg({
+        type: "sendnumber",
+        content: buttonValue,
+      })
+    }
+  },[buttonValue])
 
   useEffect(() => {
     if (username !== "anonymous") {
@@ -147,6 +162,8 @@ export function App() {
               setMode: setMode,
               bingoList: bingoList,
               setBingoList: setBingoList,
+              buttonValue: buttonValue,
+              setButtonValue: setButtonValue,
             }} />
           </Route>
           <Route path="/">

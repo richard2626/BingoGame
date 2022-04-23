@@ -29,6 +29,7 @@ USERS = {
 """
 
 
+# 接收APP傳來的資料 => 判斷情況回傳
 async def chat(websocket, path):
     # 握手
     await websocket.send(json.dumps({"type": "handshake"}))
@@ -51,11 +52,22 @@ async def chat(websocket, path):
                            "from": name,
                            }
 
-        # 玩家發送條數
+        # 玩家勝利（發送條數）
         elif data["type"] == 'finish':
             print("someone won")
             ingame = False
 
+        # 玩家發送號碼 => 請下一個玩家發數字 =>
+        elif data["type"] == 'sendnumber':
+            user_send = "undefined"
+            received_num = data["content"]
+            for k, v in USERS.items():
+                if v["ws"] == websocket:
+                    user_send = v["name"]
+            message = {
+                "type": 'player_send_number',
+                "content": "{user} chose {received_num}".format(user=user_send, received_num=received_num),
+            }
         # 玩家準備完成
         elif data["type"] == 'ready':
             username = "undefined"
