@@ -20,11 +20,17 @@ export function App() {
   const [online, setOnline] = useState(0)
   const [mode, setMode] = useState("picking") // ["picking"|"gaming"|"changing"]
   const [buttonValue, setButtonValue] = useState("0")
-  const [ingame, setIngame] = useState(false)
+
 
   //const [temp,setTemp] = useState([]) // it could be anything
   const array = new Array(25)
   const [bingoList,setBingoList] = useState(array.fill(0, 0, 25))
+
+  //檢查賓果條數 & 是否已按過
+  const checkBingoList = new Array(25)
+  for(i = 0;i<25;i++){
+    checkBingoList[i] = new Array(2)
+  }
 
   //發送訊息給Server
   const sendMsg = (data) => {
@@ -178,6 +184,7 @@ export function App() {
               setMode: setMode,
               bingoList: bingoList,
               setBingoList: setBingoList,
+              checkBingoList:checkBingoList,
               buttonValue: buttonValue,
               setButtonValue: setButtonValue,
             }} />

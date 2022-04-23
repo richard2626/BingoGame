@@ -7,12 +7,12 @@ export default function Games(props) {
     const [number, setNumber] = useState(1);
     const [theme, setTheme] = useState("bg-indigo-200 hover:bg-indigo-300")
 
-    
+    //賓果盤被按下後
     const handleButtonClicked = (event) => {
         switch (props["pack"]["mode"]) {
             case "picking":
                 //setBingoList(bingoList[event.target.value] = number)
-                console.log(event.target.value)
+                console.log(event.target.key)
                 let array = props["pack"]["bingoList"]
                 array[event.target.value] = number
                 props["pack"]["setBingoList"](array)
@@ -20,11 +20,17 @@ export default function Games(props) {
                 break;
             case "gaming":
                 props["pack"]["setButtonValue"](props["pack"]["bingoList"][event.target.value])
+                console.log(props["pack"]["checkBingoList"][event.target.value])
+
+
+
                 break;
             case "erase":
                 break;
         }
     }
+
+    //確認排版
     const confirmTable = async () => {
         const result = await Swal.fire({
             icon: "info",
@@ -51,6 +57,7 @@ export default function Games(props) {
         setName()
     }, [])
 
+    //輸入玩家名稱
     const setName = async () => {
         let name = ""
         Swal.fire({
@@ -68,7 +75,7 @@ export default function Games(props) {
             }
         })
     }
-
+    //製作隨機賓果盤
     const randomSort = () => {
         let bingo_temp = Array(25)
         let i = 0
@@ -81,6 +88,7 @@ export default function Games(props) {
         ))
 
         props["pack"]["setBingoList"](bingo_temp)
+        props["pack"]["checkBingoList"] = bingo_temp
         setNumber(26)
     }
 
@@ -97,7 +105,7 @@ export default function Games(props) {
                         <button className={`${theme} text-indigo-200 hover:text-indigo-300 w-12 h-12 text-amber-600 rounded-md border-2 border-solid border-gray-500 disabled:cursor-not-allowed disabled:bg-indigo-300 disabled:text-zinc-50 text-lg font-bold`}
                             value={index}
                             onClick={handleButtonClicked}
-                            disabled={(props["pack"]["mode"] === "picking" && props["pack"]["bingoList"][index] !== 0)} 
+                    disabled={(props["pack"]["mode"] === "picking" && props["pack"]["bingoList"][index] !== 0)} 
                             key={`${index}`}>{item}</button>
                 
                     ))}
