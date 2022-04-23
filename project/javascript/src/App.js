@@ -148,7 +148,20 @@ export function App() {
         {/* Routes */}
         <Switch>
           <Route path="/admin">
-            <Admin />
+            <Admin pack={
+              {
+                messages:messages,
+                sendMessage :sendMessage,
+                setSendMessage :setSendMessage,
+                username : username,
+                setUsername: setUsername,
+                online : online,
+                mode: mode,
+                setMode :setMode,
+                
+                
+              }
+            }/>
           </Route>
           <Route path="/games">
             <Game pack={{

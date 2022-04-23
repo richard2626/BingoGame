@@ -86,7 +86,6 @@ export default function Games(props) {
 
     return (
         <div className="flex flex-col bg-indigo-50 text-center w-full space-y-2 pt-10 ">
-
             <div className="flex flex-row bg-indigo-100 text-center w-full h-600 justify-center" >
                 <div className="hidden md:block w-1/5 bg-red-100 py-2 px-1">
                     <Messages pack={props["pack"]} />

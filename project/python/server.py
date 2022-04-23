@@ -64,6 +64,7 @@ async def chat(websocket, path):
             for k, v in USERS.items():
                 if v["ws"] == websocket:
                     user_send = v["name"]
+                    break
             message = {
                 "type": 'player_send_number',
                 "content": "{user} chose {received_num}".format(user=user_send, received_num=received_num),
