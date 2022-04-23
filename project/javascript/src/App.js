@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 
-import Admin from "./pages/Admin";
+// import Admin from "./pages/Admin";
 import Game from "./pages/Games"
 import Home from "./pages/Home"
 import { useEffect, useState } from "react";
