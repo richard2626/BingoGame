@@ -2,13 +2,17 @@ const initialState = {
     uid: "undefined",
     name: "anonymous",
     bingoList: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    bingoSelected: [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
+    bingoSelected:[[1, 1, 1, 1, 1],[ 1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1]],
+    bingoSelected2 :[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
     numberPicked: [],
     messages: [],
     online: 0,
     gamemode: "picking",
     myTurn: false,
+    point: 0
 }
+
+
 
 export const profile = (state = initialState, action) => {
     switch (action["type"]) {
@@ -30,16 +34,15 @@ export const profile = (state = initialState, action) => {
                 bingoList: action.payload.bingoList
             }
         case "UPDATEBINGOSELECTED":
-            let array = state["bingoSelected"]
-            array[action.payload.bingoSelected] = true
             return {
                 ...state,
-                bingoSelected: array
+                bingoSelected: action.payload.bingoSelected
             }
+        
         case "UPDATENUMBERPICKED":
             return {
                 ...state,
-                numberPicked: [...state.numberPicked, action.payload.numberPicked]
+                numberPicked: action.payload.numberPicked
             }
         case "UPDATEMESSAGES":
             return {
@@ -60,6 +63,11 @@ export const profile = (state = initialState, action) => {
             return {
                 ...state,
                 myTurn: action.payload.myTurn
+            }
+        case "UPDATEPOINT":
+            return {
+                ...state,
+                point: action.payload.point
             }
         default:
             return state;

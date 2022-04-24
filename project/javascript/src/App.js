@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from "uuid"
 import Nav from "./components/nav"
 
 import { useDispatch, useSelector } from "react-redux";
-import { updateName, updateUUID, updateBingoList, updateBingoSelected, updateMessages, updateMyTurn, updateOnlineMember } from "./redux/actions"
+import { updateName, updateUUID, updateBingoList, updateBingoSelected, updateMessages, updateMyTurn, updateOnlineMember, updateNumberPicked, updatePoint } from "./redux/actions"
 import { store } from "./redux/store";
 
 const client = new W3CWebSocket("ws://127.0.0.1:1234")
@@ -22,6 +22,9 @@ export function App() {
   const [username, setUsername] = useState(useSelector(state => state.profile.name))
   const [mode, setMode] = useState(useSelector(state => state.profile.gamemode)) // ["picking"|"gaming"|"changing"]
   const [myTurn, setMyTurn] = useState(useSelector(state => state.profile.myTurn))
+  const [bingoSelected, setBingoSelected] = useState(useSelector(state => state.profile.bingoSelected))
+  const [point,setPoint] = useState(useSelector(state => state.profile.point))
+  const [realpoint, setRealpoint] =useState(point)
 
   const [sendMessage, setSendMessage] = useState("")
   const [buttonValue, setButtonValue] = useState("0")
@@ -31,6 +34,8 @@ export function App() {
     setMyTurn(store.getState().profile.myTurn)
     setUsername(store.getState().profile.name)
     setUid(store.getState().profile.uid)
+    setBingoSelected(store.getState().profile.bingoSelected)
+    setPoint(store.getState().profile.point)
   })
 
   //發送訊息給Server
@@ -39,6 +44,65 @@ export function App() {
     client.send(JSON.stringify(data))
   }
 
+  //計算條數
+  const checkpoint = () =>{
+    let temp_array = store.getState().profile.bingoSelected
+    len = store.getState().profile.numberPicked.length
+    for(i =0;i<len;i++){
+      count = 0
+      for(x = 0;x<25;x++){
+        if(store.getState().profile.bingoList[x] == store.getState().profile.numberPicked[i]){
+          temp_array[parseInt(count/5)][count%5] = 0
+        }
+        count++
+      }
+    }
+    dispatch(updateBingoSelected({
+      bingoSelected : temp_array
+    }))
+    console.log(store.getState().profile.bingoSelected)
+    console.log(store.getState().profile.numberPicked)
+    //橫
+    let k = 0
+    for(i=0;i<5;i++){
+        sum = 0
+        for(j=0;j<5;j++){
+            sum += temp_array[i][j] 
+        }
+        if( sum === 0 ){
+            k++
+        }
+    }
+    //縱
+    for(i=0;i<5;i++){
+        sum = 0
+        for(j=0;j<5;j++){
+            sum += temp_array[j][i]
+        }
+        if( sum === 0 ){
+            k++
+        }
+    }
+    //斜
+    for(i=0;i<5;i++){
+        sum += temp_array[i][i]
+    }
+    if( sum === 0 ){
+        k++
+    }
+    sum = 0
+    for(i=0;i<5;i++){
+        sum += temp_array[i][4-i]
+    }
+    if( sum === 0 ){
+        k++
+    }
+    console.log(k)
+    setRealpoint(k)
+    dispatch(updatePoint({
+      point: k
+    }))
+}
   //處理Server發來的訊息
   const handleMessage = (event) => {
     const message = JSON.parse(event.data)
@@ -85,6 +149,12 @@ export function App() {
         break;
       case "player_send_number":
         new_message = `${message["content"]}`
+        //接收玩家選的數字
+        dispatch(updateNumberPicked(
+          {numberPicked : message["picked_list"]}
+        ))
+        checkpoint()
+      
         if (message["player"] === store.getState().profile.uid) {
           // it's my turn
           dispatch(updateMyTurn(
@@ -92,6 +162,9 @@ export function App() {
           ))
         }
         break;
+      case "finish":
+        new_message=`${message["content"]}`
+       break;
       case "change_name":
         //new_message = `${message["from"]} changed to ${message["to"]}`
         new_message = `${message["to"]} 已加入`
@@ -110,6 +183,7 @@ export function App() {
     event.preventDefault()
     event.returnValue = ""
   }
+
 
   useEffect(() => {
     client.onopen = () => {
@@ -132,6 +206,17 @@ export function App() {
     setSendMessage("")
   }, [sendMessage])
 
+  //如果條數有動
+  useEffect(() => {
+   if(realpoint == 3){
+    sendMsg({
+      type: "finish",
+      content:""
+    })
+   }
+  },[realpoint])
+
+  //按按鈕後 取消自己的選號碼狀態
   useEffect(() => {
     if (buttonValue !== "0") {
       if (myTurn) {

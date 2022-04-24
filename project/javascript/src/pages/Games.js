@@ -12,9 +12,13 @@ export default function Games(props) {
     const [theme, setTheme] = useState("bg-indigo-200 hover:bg-indigo-300")
     const [mode, setMode] = useState(useSelector(state => state.profile.gamemode))
     const [myTurn, setMyTurn] = useState(useSelector(state => state.profile.myTurn))
-
-    const dispatch = useDispatch()
+    const [bingoSelected, setBingoSelected] = useState(useSelector(state => state.profile.bingoSelected))
     const [bingoList, setBingoList] = useState(useSelector(state => state.profile.bingoList))
+    const dispatch = useDispatch()
+
+
+   
+
 
     //賓果盤被按下後
     const handleButtonClicked = (event) => {
@@ -69,6 +73,7 @@ export default function Games(props) {
         setBingoList(store.getState().profile.bingoList)
         setMode(store.getState().profile.gamemode)
         setMyTurn(store.getState().profile.myTurn)
+        setBingoSelected(store.getState().profile.bingoSelected)
     })
 
     //輸入玩家名稱
@@ -123,7 +128,7 @@ export default function Games(props) {
                         <button className={`${theme} text-red-300 hover:text-indigo-300 w-12 h-12 rounded-md border-2 border-solid border-gray-500 disabled:cursor-not-allowed disabled:bg-indigo-300 disabled:text-zinc-100 text-lg font-bold`}
                             value={index}
                             onClick={handleButtonClicked}
-                            disabled={!((mode === "picking" && bingoList[index] == false) || (mode === "gaming" && myTurn))}
+                            disabled={!((mode === "picking" && bingoList[index] == false) || (mode === "gaming" && myTurn))|| (bingoSelected[parseInt((index)/5)][((index)%5)] == 0)}
                             key={`${index}`}>{item}</button>
 
                     ))}

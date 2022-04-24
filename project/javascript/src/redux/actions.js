@@ -8,6 +8,7 @@ export const UPDATENUMBERPICKED = "UPDATENUMBERPICKED"
 export const UPDATEONLINEMEMBER = "UPDATEONLINEMEMBER"
 export const UPDATEGAMEMODE = "UPDATEGAMEMODE"
 export const UPDATEMYTURN = "UPDATEMYTURN"
+export const UPDATEPOINT = "UPDATEPOINT"
 
 export const resetProfile = () => ({ type: RESETPROFILE })
 export const updateUUID = (value) => ({ type: UPDATEUUID, payload: value })
@@ -19,3 +20,4 @@ export const updateMessages = (value) => ({ type: UPDATEMESSAGES, payload: value
 export const updateOnlineMember = (value) => ({ type: UPDATEONLINEMEMBER, payload: value })
 export const updateGameMode = (value) => ({ type: UPDATEGAMEMODE, payload: value })
 export const updateMyTurn = (value) => ({ type: UPDATEMYTURN, payload: value })
+export const updatePoint = (value) => ({type: UPDATEPOINT,payload: value})

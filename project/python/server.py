@@ -43,7 +43,7 @@ async def chat(websocket, path):
         global number_picked
         data = json.loads(message)
         message = {}
-        
+
         # 玩家互傳訊息
         if data["type"] == 'send':
             name = 'undefined'
@@ -58,10 +58,15 @@ async def chat(websocket, path):
 
         # 玩家勝利（發送條數）
         elif data["type"] == 'finish':
+            name = 'undefined'
+            for k, v in USERS.items():
+                if v["ws"] == websocket:
+                    name = v["name"]
             print("someone won")
             ingame = False
             message = {
-                "type": "finish"
+                "type": "finish",
+                "content": "{name} 贏了!!".format(name=name)
             }
 
         # 玩家發送號碼 => 請下一個玩家發數字 =>
@@ -77,9 +82,9 @@ async def chat(websocket, path):
                     break
             next = False
             next_player = list(USERS.keys())[0]
-            for k,v in USERS.items():
+            for k, v in USERS.items():
                 if next:
-                    next_player = True
+                    next_player = k
                     break
                 if user_uid == k:
                     next = True
@@ -111,7 +116,8 @@ async def chat(websocket, path):
                 message = {
                     "type": "system",
                     "content": "Game start!!!",
-                    "player": list(USERS.keys())[0] # tell the first person that it starts with him
+                    # tell the first person that it starts with him
+                    "player": list(USERS.keys())[0]
                 }
             else:
                 message = {
@@ -171,7 +177,7 @@ async def chat(websocket, path):
             await asyncio.wait([sending_message(message_lefterror, value["ws"], key) for key, value in USERS.items()])
             lefterror = ""
             print("someoneleft")
-        
+
         await asyncio.wait([sending_message(message, value["ws"], key) for key, value in USERS.items()])
 
 

@@ -22,12 +22,14 @@ export default function Notification(props) {
     const [username, setUsername] = useState(useSelector(state => state.profile.name))
     const [mode, setMode] = useState(useSelector(state => state.profile.gamemode))
     const [online, setOnline] = useState(useSelector(state => state.profile.online))
-
+    const [point, setPoint] = useState(useSelector(state => state.profile.point))
+ 
     store.subscribe(() => {
         setMyturn(store.getState().profile.myTurn)
         setUsername(store.getState().profile.name)
         setOnline(store.getState().profile.online)
         setMode(store.getState().profile.gamemode)
+        setPoint(store.getState().profile.point)
     })
 
     useEffect(() => {
@@ -47,6 +49,7 @@ export default function Notification(props) {
                 暱稱：{username}<br />
                 目前在線：{online} <br />
                 模式：{mode}<br />
+                條數：{point}<br />
                 <span hidden={props["pack"]["number"] === 26}>現在選擇：{props["pack"]["number"]}</span>
             </div>
 
