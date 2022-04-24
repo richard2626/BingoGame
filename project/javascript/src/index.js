@@ -7,12 +7,19 @@ import { PersistGate } from "redux-persist/integration/react"
 
 ReactDOM.render(
     <Provider store={store}>
+        <App />
+    </Provider>,
+    document.getElementById("root")
+)
+
+/*ReactDOM.render(
+    <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
             <App />
         </PersistGate>
     </Provider>,
     document.getElementById("root")
-);
+);*/
 
 // function App(){
 //     return(

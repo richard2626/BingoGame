@@ -3,24 +3,34 @@ import Swal from "sweetalert2"
 import Messages from "../components/game/messages";
 import Notification from "../components/game/notification"
 
+import { useSelector, useDispatch } from "react-redux";
+import { updateBingoList, updateGameMode, updateMyTurn, updateName, updateName } from "../redux/actions";
+import { store } from "../redux/store"
+
 export default function Games(props) {
     const [number, setNumber] = useState(1);
     const [theme, setTheme] = useState("bg-indigo-200 hover:bg-indigo-300")
+    const [mode, setMode] = useState(useSelector(state => state.profile.gamemode))
+    const [myTurn, setMyTurn] = useState(useSelector(state => state.profile.myTurn))
+
+    const dispatch = useDispatch()
+    const [bingoList, setBingoList] = useState(useSelector(state => state.profile.bingoList))
 
     //賓果盤被按下後
     const handleButtonClicked = (event) => {
-        switch (props["pack"]["mode"]) {
+        switch (mode) {
             case "picking":
                 //setBingoList(bingoList[event.target.value] = number)
-                console.log(props["pack"]["bingoList"])
-                let array = props["pack"]["bingoList"]
+                console.log(bingoList)
+                let array = bingoList
                 array[event.target.value] = number
-                props["pack"]["setBingoList"](array)
+                dispatch(updateBingoList({
+                    bingoList: array
+                }))
                 setNumber(number + 1)
                 break;
             case "gaming":
-                props["pack"]["setButtonValue"](props["pack"]["bingoList"][event.target.value])
-                console.log(props["pack"]["checkBingoList"][event.target.value])
+                props["pack"]["setButtonValue"](bingoList[event.target.value])
                 break;
             case "erase":
                 break;
@@ -37,23 +47,29 @@ export default function Games(props) {
         })
         if (result.isConfirmed) {
             Swal.fire("Saved!", "", "success")
-            props["pack"]["setMode"]("gaming")
+            dispatch(updateGameMode({
+                "gamemode": "gaming"
+            }))
             setTheme("")
         } else if (result.isDenied) {
             Swal.fire("進入修改模式", "", "info")
-            props["pack"]["setMode"]("changing")
+            dispatch(updateGameMode({
+                "gamemode": "changing"
+            }))
             setTheme("")
         }
     }
-
-    useEffect(() => {
-        console.log(props.pack.messages)
-    }, [props.pack.messages])
 
     // set name when window is ready
     useEffect(() => {
         setName()
     }, [])
+
+    store.subscribe(() => {
+        setBingoList(store.getState().profile.bingoList)
+        setMode(store.getState().profile.gamemode)
+        setMyTurn(store.getState().profile.myTurn)
+    })
 
     //輸入玩家名稱
     const setName = async () => {
@@ -68,7 +84,10 @@ export default function Games(props) {
             showLoaderOnConfirm: true,
             allowOutsideClick: false,
             preConfirm: (name) => {
-                props["pack"]["setUsername"](name)
+                dispatch(updateName(
+                    { name: name }
+                ))
+                console.log(store.getState().profile.name)
             }
         })
     }
@@ -84,8 +103,10 @@ export default function Games(props) {
             Math.random() - 0.5
         ))
 
-        props["pack"]["setBingoList"](bingo_temp)
-        props["pack"]["checkBingoList"] = bingo_temp
+        dispatch(updateBingoList({
+            bingoList: bingo_temp
+        }))
+
         setNumber(26)
     }
 
@@ -98,13 +119,13 @@ export default function Games(props) {
                 {/*賓果盤*/}
                 <div className="bg-slate-300 w-80 h-80 text-center grid grid-cols-5 justify-center px-1" id="bingoTable">
                     {/* 賓果按鈕 */}
-                    {props["pack"]["bingoList"].map((item, index) => (
+                    {bingoList.map((item, index) => (
                         <button className={`${theme} text-red-300 hover:text-indigo-300 w-12 h-12 rounded-md border-2 border-solid border-gray-500 disabled:cursor-not-allowed disabled:bg-indigo-300 disabled:text-zinc-100 text-lg font-bold`}
                             value={index}
                             onClick={handleButtonClicked}
-                            disabled={!((props["pack"]["mode"] === "picking" && props["pack"]["bingoList"][index] == false) || (props["pack"]["mode"] === "gaming" && props["pack"]["myTurn"]))} 
+                            disabled={!((mode === "picking" && bingoList[index] == false) || (mode === "gaming" && myTurn))}
                             key={`${index}`}>{item}</button>
-                
+
                     ))}
                 </div>
                 <div className="hidden md:block w-1/5 bg-red-100 py-2 px-1">
