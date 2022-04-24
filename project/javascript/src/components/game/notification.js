@@ -1,42 +1,42 @@
-import { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
+import { useEffect, useState, useRef } from "react"
+import { useSelector, useDispatch } from "react-redux"
+import { updateMyTurn } from "../../redux/actions"
 import { store } from "../../redux/store"
 
 export default function Notification(props) {
-    const [timeRemain,setTimeRemain] = useState(0)
-    const [timeClass,setTimeClass] = useState("")
+    const [timeRemain, setTimeRemain] = useState(0)
 
-    const [myTurn,setMyturn] = useState(useSelector(state => state.profile.myTurn))
-    const [username,setUsername] = useState(useSelector(state => state.profile.name))
-    const [mode,setMode] = useState(useSelector(state => state.profile.gamemode))
-    const [online,setOnline] = useState(useSelector(state=>state.profile.online))
+    const [timeClass, setTimeClass] = useState("")
+    const dispatch = useDispatch()
 
-    store.subscribe(()=>{
+    const intervalRef = useRef()
+
+    useEffect(() => {
+        intervalRef.current = setInterval(() => {
+            setTimeRemain(prev => prev - 1)
+        }, 1000)
+        return () => clearInterval(intervalRef.current)
+    }, [])
+
+    const [myTurn, setMyturn] = useState(useSelector(state => state.profile.myTurn))
+    const [username, setUsername] = useState(useSelector(state => state.profile.name))
+    const [mode, setMode] = useState(useSelector(state => state.profile.gamemode))
+    const [online, setOnline] = useState(useSelector(state => state.profile.online))
+
+    store.subscribe(() => {
         setMyturn(store.getState().profile.myTurn)
         setUsername(store.getState().profile.name)
         setOnline(store.getState().profile.online)
         setMode(store.getState().profile.gamemode)
     })
 
-    useEffect(()=>{
-        if(timeRemain > 0){
-            setTimeout(()=>{
-                timeRemain(timeRemain - 1)
-            },1000)
-        }else if(timeRemain === 0){
-            // props["pack"]["setNumberPicked"](0)
-        }
-    },[timeRemain])
-
-    useEffect(()=>{
-        if(myTurn){
+    useEffect(() => {
+        if (myTurn) {
             setTimeRemain(30)
-            setTimeClass("visible")
-        }else{
+        } else {
             setTimeRemain(0)
-            setTimeClass("invisible")
         }
-    },[myTurn])    
+    }, [myTurn])
 
     return (
         <div className="w-full bg-red-100 flex flex-col justify-between py-2 h-full">
@@ -52,9 +52,9 @@ export default function Notification(props) {
 
             <div className="">
                 <button className="bg-indigo-200 py-1 px-2 rounded-lg hover:bg-indigo-300 "
-                    onClick={props["pack"]["randomSort"]} hidden={props["pack"]["mode"] === "gaming"}>隨機排序!!!</button>
+                    onClick={props["pack"]["randomSort"]} hidden={mode === "gaming"}>隨機排序!!!</button>
                 <button className="bg-indigo-200 py-1 px-2 rounded-lg hover:bg-indigo-300 "
-                    hidden={!(props["pack"]["number"] === 26 && (props["pack"]["mode"] === "picking" || props["pack"]["mode"] === "changing"))} onClick={props["pack"]["confirmTable"]}>確定/修改排版</button>
+                    hidden={!(props["pack"]["number"] === 26 && (mode === "picking" || mode === "changing"))} onClick={props["pack"]["confirmTable"]}>確定/修改排版</button>
             </div>
         </div>
     )

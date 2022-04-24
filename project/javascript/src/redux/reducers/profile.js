@@ -39,12 +39,12 @@ export const profile = (state = initialState, action) => {
         case "UPDATENUMBERPICKED":
             return {
                 ...state,
-                numberPicked: [...numberPicked, action.payload.numberPicked]
+                numberPicked: [...state.numberPicked, action.payload.numberPicked]
             }
-        case "UPDATEMESSAGE":
+        case "UPDATEMESSAGES":
             return {
                 ...state,
-                messages: [...messages, action.payload.message]
+                messages: [...state.messages, action.payload.message]
             }
         case "UPDATEONLINEMEMBER":
             return {

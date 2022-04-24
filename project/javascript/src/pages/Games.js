@@ -4,25 +4,27 @@ import Messages from "../components/game/messages";
 import Notification from "../components/game/notification"
 
 import { useSelector, useDispatch } from "react-redux";
-import { updateBingoList, updateName, updateName } from "../redux/actions";
+import { updateBingoList, updateGameMode, updateMyTurn, updateName, updateName } from "../redux/actions";
 import { store } from "../redux/store"
 
 export default function Games(props) {
     const [number, setNumber] = useState(1);
     const [theme, setTheme] = useState("bg-indigo-200 hover:bg-indigo-300")
+    const [mode, setMode] = useState(useSelector(state => state.profile.gamemode))
+    const [myTurn, setMyTurn] = useState(useSelector(state => state.profile.myTurn))
 
     const dispatch = useDispatch()
     const [bingoList, setBingoList] = useState(useSelector(state => state.profile.bingoList))
-    
+
     //賓果盤被按下後
     const handleButtonClicked = (event) => {
-        switch (props["pack"]["mode"]) {
+        switch (mode) {
             case "picking":
                 //setBingoList(bingoList[event.target.value] = number)
                 console.log(bingoList)
                 let array = bingoList
                 array[event.target.value] = number
-                dispatch(UPDATEBINGOLIST({
+                dispatch(updateBingoList({
                     bingoList: array
                 }))
                 setNumber(number + 1)
@@ -45,23 +47,28 @@ export default function Games(props) {
         })
         if (result.isConfirmed) {
             Swal.fire("Saved!", "", "success")
-            props["pack"]["setMode"]("gaming")
+            dispatch(updateGameMode({
+                "gamemode": "gaming"
+            }))
             setTheme("")
         } else if (result.isDenied) {
             Swal.fire("進入修改模式", "", "info")
-            props["pack"]["setMode"]("changing")
+            dispatch(updateGameMode({
+                "gamemode": "changing"
+            }))
             setTheme("")
         }
     }
 
     // set name when window is ready
     useEffect(() => {
-        console.log(bingoList)
         setName()
     }, [])
 
     store.subscribe(() => {
         setBingoList(store.getState().profile.bingoList)
+        setMode(store.getState().profile.gamemode)
+        setMyTurn(store.getState().profile.myTurn)
     })
 
     //輸入玩家名稱
@@ -80,7 +87,7 @@ export default function Games(props) {
                 dispatch(updateName(
                     { name: name }
                 ))
-                console.log(name)
+                console.log(store.getState().profile.name)
             }
         })
     }
@@ -116,7 +123,7 @@ export default function Games(props) {
                         <button className={`${theme} text-red-300 hover:text-indigo-300 w-12 h-12 rounded-md border-2 border-solid border-gray-500 disabled:cursor-not-allowed disabled:bg-indigo-300 disabled:text-zinc-100 text-lg font-bold`}
                             value={index}
                             onClick={handleButtonClicked}
-                            disabled={!((props["pack"]["mode"] === "picking" && bingoList[index] == false) || (props["pack"]["mode"] === "gaming" && props["pack"]["myTurn"]))}
+                            disabled={!((mode === "picking" && bingoList[index] == false) || (mode === "gaming" && myTurn))}
                             key={`${index}`}>{item}</button>
 
                     ))}

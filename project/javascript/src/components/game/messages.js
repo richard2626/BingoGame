@@ -1,11 +1,12 @@
 import { useEffect, useState, useRef } from "react"
 
 import { useDispatch, useSelector } from "react-redux"
+import { store } from "../../redux/store"
 
 export default function Messages(props) {
     const [messageInput, setMessageInput] = useState("")
 
-    const messages = useSelector(state => state.profile.messages)
+    const [messages,setMessages] = useState(useSelector(state => state.profile.messages))
 
     const sendMessage = (event) => {
         event.preventDefault()
@@ -18,6 +19,10 @@ export default function Messages(props) {
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
     }
+
+    store.subscribe(()=>{
+        setMessages(store.getState().profile.messages)
+    })
 
     useEffect(() => {
         scrollToBottom()

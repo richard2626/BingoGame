@@ -18,6 +18,7 @@ const client = new W3CWebSocket("ws://127.0.0.1:1234")
 export function App() {
   // unique uuid
   const dispatch = useDispatch()
+  const [uid, setUid] = useState(useSelector(state => state.profile.uid))
   const [username, setUsername] = useState(useSelector(state => state.profile.name))
   const [mode, setMode] = useState(useSelector(state => state.profile.gamemode)) // ["picking"|"gaming"|"changing"]
   const [myTurn, setMyTurn] = useState(useSelector(state => state.profile.myTurn))
@@ -26,16 +27,11 @@ export function App() {
   const [buttonValue, setButtonValue] = useState("0")
 
   store.subscribe(() => {
-    setMode(store.getState().profile.mode)
+    setMode(store.getState().profile.gamemode)
     setMyTurn(store.getState().profile.myTurn)
-    setUsername(store.getState().profile.username)
+    setUsername(store.getState().profile.name)
+    setUid(store.getState().profile.uid)
   })
-
-  //檢查賓果條數 & 是否已按過
-  const checkBingoList = new Array(25)
-  for (i = 0; i < 25; i++) {
-    checkBingoList[i] = new Array(2)
-  }
 
   //發送訊息給Server
   const sendMsg = (data) => {
@@ -49,7 +45,6 @@ export function App() {
     console.log(message)
     let sender;
     let new_message = ""
-    console.log("Hi")
     dispatch(updateOnlineMember({
       online: message["online"]
     }))
@@ -58,13 +53,12 @@ export function App() {
         console.log("system")
         sender = "系統訊息"
         new_message = `SYSTEM: ${message["content"]}`
-        console.log(`player ${typeof (player)}`)
-        if (message["player"] === uid) {
+        console.log(`player: ${message["player"]}`)
+        if (message["player"] === store.getState().profile.uid) {
           // it's my turn
           dispatch(updateMyTurn(
             { myTurn: true }
           ))
-          console.log("myturn!!")
         }
         break;
       case "user":
@@ -74,23 +68,29 @@ export function App() {
         break;
       case "handshake":
         const name = uuidv4().substring(0, 7);
+        console.log(uid)
         dispatch(updateUUID({
           uid: name
         }))
-        console.log(name)
         sendMsg({
           type: "login",
-          content: name,
+          content: store.getState().profile.uid,
         })
         return;
       case "login":
-        //new_message = `${message["content"]} 已加入`
+        // new_message = `${message["content"]} 已加入`
         break;
       case "logout":
         new_message = `${message["content"]} 離開了遊戲`
         break;
       case "player_send_number":
         new_message = `${message["content"]}`
+        if (message["player"] === store.getState().profile.uid) {
+          // it's my turn
+          dispatch(updateMyTurn(
+            { myTurn: true }
+          ))
+        }
         break;
       case "change_name":
         //new_message = `${message["from"]} changed to ${message["to"]}`
@@ -100,6 +100,7 @@ export function App() {
         alert("遊戲不開放")
         break;
     }
+    console.log(`message: ${new_message}`)
     dispatch(updateMessages({
       message: new_message
     }))
@@ -138,12 +139,16 @@ export function App() {
           type: "sendnumber",
           content: buttonValue,
         })
+        dispatch(updateMyTurn({
+          myTurn: false,
+        }))
       }
     }
   }, [buttonValue])
 
   useEffect(() => {
     if (username !== "anonymous") {
+      console.log("username")
       sendMsg({
         type: "update_name",
         content: username
@@ -155,7 +160,7 @@ export function App() {
     if (mode === "gaming") {
       sendMsg({
         "type": "ready",
-        "content": bingoList,
+        "content": store.getState().profile.bingoList,
       })
     }
   }, [mode])
