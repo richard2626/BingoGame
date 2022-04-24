@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from "uuid"
 import Nav from "./components/nav"
 
 import { useDispatch, useSelector } from "react-redux";
-import { updateName, updateUUID, updateBingoList, updateBingoSelected, updateMessages, updateMyTurn, updateOnlineMember, updateNumberPicked, updatePoint } from "./redux/actions"
+import { updateName, updateUUID, updateBingoList, updateBingoSelected, updateMessages, updateMyTurn, updateOnlineMember, updateNumberPicked, updatePoint,updateGameMode } from "./redux/actions"
 import { store } from "./redux/store";
 
 const client = new W3CWebSocket("ws://127.0.0.1:1234")
@@ -162,9 +162,14 @@ export function App() {
           ))
         }
         break;
+      //有人贏了
       case "finish":
         new_message=`${message["content"]}`
-       break;
+        alert(`${message["content"]}`)
+        dispatch(updateGameMode({
+          "gamemode": "finished"
+        }))
+        break;
       case "change_name":
         //new_message = `${message["from"]} changed to ${message["to"]}`
         new_message = `${message["to"]} 已加入`
@@ -208,7 +213,7 @@ export function App() {
 
   //如果條數有動
   useEffect(() => {
-   if(realpoint == 3){
+   if(realpoint == 1){
     sendMsg({
       type: "finish",
       content:""
@@ -247,6 +252,9 @@ export function App() {
         "type": "ready",
         "content": store.getState().profile.bingoList,
       })
+    }
+    if (mode === "finished"){
+
     }
   }, [mode])
 

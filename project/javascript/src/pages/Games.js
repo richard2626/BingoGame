@@ -54,13 +54,13 @@ export default function Games(props) {
             dispatch(updateGameMode({
                 "gamemode": "gaming"
             }))
-            setTheme("")
+            setTheme("bg-neutral-50")
         } else if (result.isDenied) {
             Swal.fire("進入修改模式", "", "info")
             dispatch(updateGameMode({
                 "gamemode": "changing"
             }))
-            setTheme("")
+            setTheme("bg-neutral-50")
         }
     }
 
@@ -122,16 +122,18 @@ export default function Games(props) {
                     <Messages pack={props["pack"]} />
                 </div>
                 {/*賓果盤*/}
-                <div className="bg-slate-300 w-80 h-80 text-center grid grid-cols-5 justify-center px-1" id="bingoTable">
-                    {/* 賓果按鈕 */}
-                    {bingoList.map((item, index) => (
-                        <button className={`${theme} text-red-300 hover:text-indigo-300 w-12 h-12 rounded-md border-2 border-solid border-gray-500 disabled:cursor-not-allowed disabled:bg-indigo-300 disabled:text-zinc-100 text-lg font-bold`}
-                            value={index}
-                            onClick={handleButtonClicked}
-                            disabled={!((mode === "picking" && bingoList[index] == false) || (mode === "gaming" && myTurn))|| (bingoSelected[parseInt((index)/5)][((index)%5)] == 0)}
-                            key={`${index}`}>{item}</button>
+                <div className="flow-root">
+                    <div className="bg-slate-300 w-80 h-80 text-center grid grid-cols-5 justify-center px-1" id="bingoTable">
+                        {/* 賓果按鈕 */}
+                        {bingoList.map((item, index) => (
+                            <button className={`${theme} text-red-300 hover:text-indigo-300 w-12 h-12 rounded-md border-2 border-solid border-gray-500 disabled:cursor-not-allowed disabled:bg-indigo-300 disabled:text-zinc-100  text-lg font-bold`}
+                                value={index}
+                                onClick={handleButtonClicked}
+                                disabled={!((mode === "picking" && bingoList[index] == false) || (mode === "gaming" && myTurn))|| (bingoSelected[parseInt((index)/5)][((index)%5)] == 0)||(mode === "finished")}
+                                key={`${index}`}>{item}</button>
 
-                    ))}
+                        ))}
+                    </div>
                 </div>
                 <div className="hidden md:block w-1/5 bg-red-100 py-2 px-1">
                     <Notification pack={{ ...props["pack"], number: number, confirmTable: confirmTable, randomSort: randomSort }} />

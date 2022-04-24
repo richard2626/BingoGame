@@ -55,7 +55,7 @@ export default function Notification(props) {
 
             <div className="">
                 <button className="bg-indigo-200 py-1 px-2 rounded-lg hover:bg-indigo-300 "
-                    onClick={props["pack"]["randomSort"]} hidden={mode === "gaming"}>隨機排序!!!</button>
+                    onClick={props["pack"]["randomSort"]} hidden={mode === "gaming" || mode === "finished"}>隨機排序!!!</button>
                 <button className="bg-indigo-200 py-1 px-2 rounded-lg hover:bg-indigo-300 "
                     hidden={!(props["pack"]["number"] === 26 && (mode === "picking" || mode === "changing"))} onClick={props["pack"]["confirmTable"]}>確定/修改排版</button>
             </div>
