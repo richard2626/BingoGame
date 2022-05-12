@@ -9,13 +9,19 @@ const initialState = {
     online: 0,
     gamemode: "picking",
     myTurn: false,
-    point: 0
+    point: 0,
+    admin_is_me: false
 }
 
 export const profile = (state = initialState, action) => {
     switch (action["type"]) {
         case "RESTOREPROFILE":
             return initialState;
+        case "ADMIN_IS_ME":
+            return {
+                ...state,
+                admin_is_me: true
+            }
         case "UPDATEUUID":
             return {
                 ...state,

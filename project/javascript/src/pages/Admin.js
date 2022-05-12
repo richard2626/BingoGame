@@ -4,7 +4,7 @@ import Messages from "../components/game/messages";
 import Controlpanel from "../components/game/controlpanel";
 
 import { useSelector, useDispatch } from "react-redux";
-import { updateBingoList, updateGameMode, updateMyTurn, updateName, updateName } from "../redux/actions";
+import { admin_is_me, updateBingoList, updateGameMode, updateMyTurn, updateName, updateName } from "../redux/actions";
 import { store } from "../redux/store"
 
 export default function Admin(props){
@@ -16,12 +16,21 @@ export default function Admin(props){
   }, [])
   const setName = async () => {
     Swal.fire({
-      title: "歡迎啟用管理者權限",
+      title: "請輸入管理者密碼",
+      html: `<input type="text" id="input" class="swal2-input" placeholder="password">`,
+      confirmButtonText: 'Sign in',
       preConfirm: () => {
-        dispatch(updateName(
-            { name: "admin" }
-        ))
-      }
+        const input =Swal.getPopup().querySelector('#input').value
+        const password = 1234
+        if(input == password){
+            dispatch(updateName(
+                { name: "Admin" }
+            ))
+            dispatch(admin_is_me(
+                { admin_is_me: true}
+            ))
+        }
+    }
     })
   }
 

@@ -24,10 +24,12 @@ export function App() {
   const [myTurn, setMyTurn] = useState(useSelector(state => state.profile.myTurn))
   const [bingoSelected, setBingoSelected] = useState(useSelector(state => state.profile.bingoSelected))
   const [point,setPoint] = useState(useSelector(state => state.profile.point))
-  const [realpoint, setRealpoint] =useState(point)
+  const [admin_is_me, setAdmin_is_me] = useState(useSelector(state => state.profile.admin_is_me))
 
   const [sendMessage, setSendMessage] = useState("")
   const [buttonValue, setButtonValue] = useState("0")
+  const [realpoint, setRealpoint] =useState(point)
+  const [adminonline, setAdminonline] = useState(false)
 
   store.subscribe(() => {
     setMode(store.getState().profile.gamemode)
@@ -36,6 +38,7 @@ export function App() {
     setUid(store.getState().profile.uid)
     setBingoSelected(store.getState().profile.bingoSelected)
     setPoint(store.getState().profile.point)
+    setAdmin_is_me(store.getState().profile.admin_is_me)
   })
 
   //發送訊息給Server
@@ -170,9 +173,20 @@ export function App() {
           "gamemode": "finished"
         }))
         break;
+      //玩家加入後改名
       case "change_name":
         //new_message = `${message["from"]} changed to ${message["to"]}`
         new_message = `${message["to"]} 已加入`
+        break;
+      //管理者登入
+      case "adminlogin":
+        
+        break;
+      //管理者更改遊戲模式  
+      case "changemode":
+
+        if(message["content"] === "start" )
+
         break;
       case "reject":
         alert("遊戲不開放")
@@ -183,13 +197,13 @@ export function App() {
       message: new_message
     }))
   }
-
+  //如果玩家關閉
   const handleWindowClose = async (event) => {
     event.preventDefault()
     event.returnValue = ""
   }
 
-
+  //連接伺服器
   useEffect(() => {
     client.onopen = () => {
       console.log("websocket connected")
@@ -211,6 +225,14 @@ export function App() {
     setSendMessage("")
   }, [sendMessage])
 
+  //管理員登入
+  useEffect(() =>{
+    if(admin_is_me==true){
+      sendMsg({
+        type: "adminlogin",
+      })
+    }
+  },[admin_is_me])
   //如果條數有動
   useEffect(() => {
    if(realpoint == 1){

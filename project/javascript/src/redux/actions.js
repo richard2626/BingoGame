@@ -9,6 +9,7 @@ export const UPDATEONLINEMEMBER = "UPDATEONLINEMEMBER"
 export const UPDATEGAMEMODE = "UPDATEGAMEMODE"
 export const UPDATEMYTURN = "UPDATEMYTURN"
 export const UPDATEPOINT = "UPDATEPOINT"
+export const ADMIN_IS_ME = "ADMIN_IS_ME"
 
 export const resetProfile = () => ({ type: RESETPROFILE })
 export const updateUUID = (value) => ({ type: UPDATEUUID, payload: value })
@@ -21,3 +22,4 @@ export const updateOnlineMember = (value) => ({ type: UPDATEONLINEMEMBER, payloa
 export const updateGameMode = (value) => ({ type: UPDATEGAMEMODE, payload: value })
 export const updateMyTurn = (value) => ({ type: UPDATEMYTURN, payload: value })
 export const updatePoint = (value) => ({type: UPDATEPOINT,payload: value})
+export const admin_is_me = (value) => ({type: ADMIN_IS_ME})

@@ -5,14 +5,14 @@ import websockets
 
 # 名字:websockets
 USERS = {}
-USERSPOINT = {}
 PORT = 1234
 preparednum = 0
 online_people = 0
 cnt_number = 1
 ingame = False
-lefterror = ""
+leftperson = ""
 number_picked = []
+admin_in = False
 
 """
 
@@ -22,6 +22,7 @@ USERS = {
         name: name,
         ready: [true|false],
         table: [],
+        point: point,
     },
     uuid2: {
         ...
@@ -39,7 +40,7 @@ async def chat(websocket, path):
     async for message in websocket:
         global cnt_number
         global ingame
-        global lefterror
+        global leftperson
         global number_picked
         data = json.loads(message)
         message = {}
@@ -156,6 +157,14 @@ async def chat(websocket, path):
                 "from":  original_name,
                 "to": data["content"]
             }
+        # 管理者更改模式
+        elif data["type"] == 'changemode':
+            message = {"type": "changemode",
+                       "content": data["content"],
+                       }
+        # 管理者登入
+        elif data["type"] == 'adminlogin':
+            message = {"type": "adminlogin"}
 
         # 玩家退出
         # elif data["type"] == 'logout':
@@ -168,26 +177,26 @@ async def chat(websocket, path):
     # 群發
         message["online"] = len(USERS)
         # 如果有人離開
-        if lefterror != "":
+        if leftperson != "":
             message_lefterror = {
                 "type": "logout",
-                "content": lefterror,
+                "content": leftperson,
                 "user_list": list(USERS.keys()),
             }
             await asyncio.wait([sending_message(message_lefterror, value["ws"], key) for key, value in USERS.items()])
-            lefterror = ""
-            print(name+" someoneleft")
+            leftperson = ""
+            print("someoneleft")
 
         await asyncio.wait([sending_message(message, value["ws"], key) for key, value in USERS.items()])
 
 
 async def sending_message(message, ws, key):
-    global lefterror
+    global leftperson
     message["name"] = USERS[key]["name"]
     try:
         await ws.send(json.dumps(message))
     except:
-        lefterror = USERS[key]["name"]
+        leftperson = USERS[key]["name"]
         del USERS[key]
 
 start_server = websockets.serve(chat, "127.0.0.1", PORT)

@@ -92,6 +92,7 @@ export default function Games(props) {
                 dispatch(updateName(
                     { name: name }
                 ))
+                console.log(store.getState().profile.name)
             }
         })
     }
