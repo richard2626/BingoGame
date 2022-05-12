@@ -22,6 +22,16 @@ export default function Controlpanel(props) {
                 目前在線：{online} <br />
                 模式：{mode}<br />
             </div>
+            <div className="flex flex-row justify-center">
+                <button className="bg-indigo-200 py-1 px-2 rounded-lg hover:bg-indigo-300 "
+                disabled={mode === "gaming"}>
+                    Start
+                </button>
+                <div className="py-1 px-2 rounded-lg w-3"></div>
+                <button className="bg-indigo-200 py-1 px-2 rounded-lg hover:bg-indigo-300 ">
+                    Restart
+                </button>
+            </div>
         </div>
     )
 }
