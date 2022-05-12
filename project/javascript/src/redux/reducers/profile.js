@@ -12,8 +12,6 @@ const initialState = {
     point: 0
 }
 
-
-
 export const profile = (state = initialState, action) => {
     switch (action["type"]) {
         case "RESTOREPROFILE":

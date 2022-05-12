@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 
-// import Admin from "./pages/Admin";
+import Admin from "./pages/Admin";
 import Game from "./pages/Games"
 import Home from "./pages/Home"
 import { useEffect, useState } from "react";
@@ -200,7 +200,7 @@ export function App() {
       window.removeEventListener("beforeunload", handleWindowClose)
     }
   }, [])
-
+  //處理聊天室訊息
   useEffect(() => {
     if (sendMessage !== "") {
       sendMsg({
@@ -270,22 +270,14 @@ export function App() {
 
         {/* Routes */}
         <Switch>
-          {/*
+          
           <Route path="/admin">
-            <Admin pack={
-              {
-                messages:messages,
-                sendMessage :sendMessage,
-                setSendMessage :setSendMessage,
-                username : username,
-                setUsername: setUsername,
-                online : online,
-                mode: mode,
-                setMode :setMode,
-              }
-            }/>
+            <Admin pack={{
+              sendMessage: sendMessage,
+              setSendMessage: setSendMessage,
+            }}/>
           </Route>
-          */}
+
           <Route path="/games">
             <Game pack={{
               sendMessage: sendMessage,
@@ -294,9 +286,11 @@ export function App() {
               setButtonValue: setButtonValue,
             }} />
           </Route>
+
           <Route path="/">
             <Home />
           </Route>
+
         </Switch>
       </Router>
     </div>
