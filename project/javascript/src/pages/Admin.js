@@ -14,15 +14,16 @@ export default function Admin(props){
   useEffect(() => {
     setName()
   }, [])
-
   const setName = async () => {
-
-  dispatch(updateName(
-      { name: "Admin" }
-  ))
-
+    Swal.fire({
+      title: "歡迎啟用管理者權限",
+      preConfirm: () => {
+        dispatch(updateName(
+            { name: "admin" }
+        ))
+      }
+    })
   }
-
 
 
   return(

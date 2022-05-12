@@ -62,7 +62,7 @@ async def chat(websocket, path):
             for k, v in USERS.items():
                 if v["ws"] == websocket:
                     name = v["name"]
-            print("someone won")
+            print(name+" won")
             ingame = False
             message = {
                 "type": "finish",
@@ -176,7 +176,7 @@ async def chat(websocket, path):
             }
             await asyncio.wait([sending_message(message_lefterror, value["ws"], key) for key, value in USERS.items()])
             lefterror = ""
-            print("someoneleft")
+            print(name+" someoneleft")
 
         await asyncio.wait([sending_message(message, value["ws"], key) for key, value in USERS.items()])
 
