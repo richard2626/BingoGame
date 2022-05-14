@@ -6,6 +6,7 @@ import Controlpanel from "../components/game/controlpanel";
 import { useSelector, useDispatch } from "react-redux";
 import { admin_is_me, updateBingoList, updateGameMode, updateMyTurn, updateName, updateName } from "../redux/actions";
 import { store } from "../redux/store"
+import Scorepanel from "../components/game/scorepanel";
 
 export default function Admin(props){
   const [mode, setMode] = useState(useSelector(state => state.profile.gamemode))
@@ -38,14 +39,23 @@ export default function Admin(props){
   return(
     <div className="flex flex-col bg-indigo-50 text-center space-y-2 pt-10">
       <div className="flex flex-row bg-indigo-100 text-center w-full h-80 justify-center" >
+
         <div className="hidden md:block w-1/5 bg-red-100 py-2 px-1">
             <Messages pack={props["pack"]} />
         </div>
-        <div className =" w-2" >
-        </div>
-        <div className="hidden md:block w-1/5 bg-red-100 py-2 px-1">
+
+        <div className ="w-2" ></div>
+
+        <div className="hidden md:block w-1/6 bg-red-100 py-2 px-1">
             <Controlpanel pack={props["pack"]} />
         </div>
+
+        <div className =" w-2" ></div>
+        
+        <div className="hidden md:block w-1/6 bg-red-100 py-2 px-1">
+            <Scorepanel pack={props["pack"]} />
+        </div>
+
       </div>
     </div>
   );

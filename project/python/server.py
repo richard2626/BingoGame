@@ -38,6 +38,7 @@ async def chat(websocket, path):
     await websocket.send(json.dumps({"type": "handshake"}))
 
     async for message in websocket:
+        global preparednum
         global cnt_number
         global ingame
         global leftperson
@@ -106,6 +107,11 @@ async def chat(websocket, path):
                     username = v["name"]
                     v["ready"] = True
                     v["table"] = data["content"]
+            # 計算準備好的玩家
+            for k, v in USERS.items():
+                if v["ready"] == False:
+                    preparednum += 1
+                    break
 
             for k, v in USERS.items():
                 if v["ready"] == False:
