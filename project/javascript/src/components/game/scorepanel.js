@@ -1,4 +1,6 @@
-
+import { store  } from "../../redux/store"
+import { useState,useEffect } from "react"
+import { useSelector } from "react-redux"
 
 
 export default function Scorepanel(props){
