@@ -14,12 +14,7 @@ import { updateName, updateUUID, updateBingoList, updateBingoSelected, updateMes
 import { store } from "./redux/store";
 
 const client = new W3CWebSocket("ws://127.0.0.1:1234")
-
-
-
 // const client = new W3CWebSocket("ws://asus409.asuscomm.com:1234")
-// const client = new W3CWebSocket("ws://eecsed215.asuscomm.com:1234")
-// const client = new W3CWebSocket("ws://172.17.108.43:80")
 // const client = new W3CWebSocket("ws://140.113.123.7:1234")
 // const client = new W3CWebSocket("ws://192.168.50.219:1234")
 
